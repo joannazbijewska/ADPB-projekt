@@ -9,8 +9,27 @@ import csv
 import urllib
 import requests
 from lxml import html
+import re
 
 
+
+def search_blast_pdb(x):
+    urldb = "http://www.rcsb.org/pdb/rest"
+    url = urldb+"/getBlastPDB1?sequence={}&eCutOff=10.0&matrix=BLOSUM62&outputFormat=html".format(x)
+    page = requests.get(url)
+    tree = html.fromstring(page.content)
+    sequence = tree.xpath('//pre/pre/text()')
+    pattern = "([A-Z,0-9])\w+"
+    list_pdb_id = []
+    for i in sequence:
+        match = re.search(pattern, i)
+        if match:
+            if len(match.group(0)) == 4:
+                list_pdb_id.append(match.group(0))
+    if len(list_pdb_id) > 3:
+        return list_pdb_id[0:3]
+    else:
+        return list_pdb_id
 
 class Service():
     def __init__(self, urldb):
