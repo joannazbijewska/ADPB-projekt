@@ -9,7 +9,26 @@ import csv
 import urllib
 import requests
 from lxml import html
+import re
 
+
+def search_blast_pdb(x):
+    urldb = "http://www.rcsb.org/pdb/rest"
+    url = urldb+"/getBlastPDB1?sequence={}&eCutOff=10.0&matrix=BLOSUM62&outputFormat=html".format(x)
+    page = requests.get(url)
+    tree = html.fromstring(page.content)
+    sequence = tree.xpath('//pre/pre/text()')
+    pattern = "([A-Z,0-9])\w+"
+    list_pdb_id = []
+    for i in sequence:
+        match = re.search(pattern, i)
+        if match:
+            if len(match.group(0)) == 4:
+                list_pdb_id.append(match.group(0))
+    if len(list_pdb_id) > 3:
+        return list_pdb_id[0:3]
+    else:
+        return list_pdb_id
 
 
 class Service():
@@ -20,6 +39,14 @@ class Nucleic_acid_database():
 
     _urldb = "http://ndbserver.rutgers.edu"
 
+    def csv_from_excel(self):
+        wb = xlrd.open_workbook('aktualna_baza.xls')
+        sh = wb.sheet_by_name('sheet_1')
+        your_csv_file = open('data_base.csv', 'wb')
+        wr = csv.writer(your_csv_file, quoting=csv.QUOTE_ALL)
+        for rownum in xrange(sh.nrows):
+            wr.writerow(sh.row_values(rownum))
+        your_csv_file.close()
 
     def __init__(self, pdb_id):
         self.pdb_id = pdb_id
@@ -30,27 +57,17 @@ class Nucleic_acid_database():
         query = requests.get(url1)
         tree = html.fromstring(query.content)
         link_do_bazy = tree.xpath('//tr/td/h2/span/a[@id]/@href')
-        urllib.urlretrieve(url+link_do_bazy[0], "Documents/aktualna_baza.xls")
-
+        urllib.urlretrieve(url+link_do_bazy[0], "aktualna_baza.xls")
         #url = "http://ndbserver.rutgers.edu/sessions/2c72e2ca66ef2c8cf2ddec7502c9204089715776/Result.xls"
         #urllib.urlretrieve(url, "Documents/baza.xls")
 
-    def csv_from_excel():
-        wb = xlrd.open_workbook('Documents/baza.xls')
-        sh = wb.sheet_by_name('sheet_1')
-        your_csv_file = open('Documents/Result.csv', 'wb')
-        wr = csv.writer(your_csv_file, quoting=csv.QUOTE_ALL)
-        for rownum in xrange(sh.nrows):
-            wr.writerow(sh.row_values(rownum))
-        your_csv_file.close()
-
-        csv_from_excel()
     def czytanie_bazy(self):
-        with open("Documents/Result.csv","r") as f:
+        with open("Documents/data_base.csv","r") as f:
             otw = csv.reader(f)
             for i in otw:
                 if i[1] == self.pdb_id:
                     return i
+
     def pdb_download(self):
         urldb = "http://ndbserver.rutgers.edu"
         pdb_id = self.pdb_id.lower()
@@ -71,7 +88,7 @@ class Nucleic_acid_database():
         sequence = tree.xpath('//p[@class="chain"]/text()')
         return sequence[0]
 
-    def tworznie_raportu(self):
+    def report_creator(self):
         csv_from_excel()
         plik = open("Documents/raport_{}".format(self.pdb_id), "w")
         plik.write("Rna z numeru pdb {}\n".format(self.pdb_id))
@@ -89,4 +106,4 @@ class Nucleic_acid_database():
 #print czytanie_bazy("5KMZ")
 #print view_sequence("5KMZ")
 a = Nucleic_acid_database("5KMZ")
-print a.czytanie_bazy()
+print search_blast_pdb(a.view_sequence())
