@@ -30,6 +30,15 @@ def search_blast_pdb(x):
     else:
         return list_pdb_id
 
+def check_base(x):
+    with open("Documents/data_base.csv","r") as f:
+        otw = csv.reader(f)
+        for i in otw:
+            if i[1] == x:
+                return True
+
+
+
 
 class Service():
     def __init__(self, urldb):
@@ -101,9 +110,16 @@ class Nucleic_acid_database():
         print "Raport{}".format(self.pdb_id)
         plik.close()
 
+class via_sequence(Nucleic_acid_database):
+    def __init__(self, sequence, pdb_id = None):
+        self.sequence = sequence
 
-#pdb_download("5KMZ")
-#print czytanie_bazy("5KMZ")
-#print view_sequence("5KMZ")
-a = Nucleic_acid_database("5KMZ")
-print search_blast_pdb(a.view_sequence())
+    def get_from_db_via_seq(self):
+        pdb_ids = search_blast_pdb(self.sequence) #zakładając pierwszy jako właściwy
+        for i in pdb_ids:
+            if check_base(i) is True:
+                return i
+            else:
+                return sequence[0]
+szukamy = via_sequence("AACCUUCACCAAUUAGGUUCAAAUAAGUGGU")
+print szukamy.get_from_db_via_seq()
