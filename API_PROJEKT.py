@@ -11,6 +11,13 @@ import requests
 from lxml import html
 import re
 
+def database_read(self):
+    with open("Documents/NDB_database.csv","r") as f:
+        otw = csv.reader(f)
+        for i in otw:
+            if i[1] == self.pdb_id:
+                return i
+
 
 def search_blast_pdb(sequence):
     urldb = "http://www.rcsb.org/pdb/rest"
@@ -96,10 +103,10 @@ class Nucleic_acid_database():
         return sequence[0]
 
     def report_creator(self):
-        csv_from_excel()
-        f = open("Documents/report_{}".format(self.pdb_id), "w")
+
+        f = open("report_{}".format(self.pdb_id), "w")
         f.write("RNA from PDB ID {}\n".format(self.pdb_id))
-        base_info = database_read(pdb)
+        base_info = database_read(self.pdb_id)
         for i in xrange(len(base_info)):
             f.write(base_info[i]+"\n")
         sequence_view(pdb)
@@ -108,12 +115,12 @@ class Nucleic_acid_database():
         print "Report{}".format(self.pdb_id)
         f.close()
 
-#<<<<<<< HEAD
+
 class via_sequence(Nucleic_acid_database):
 
     def __init__(self, sequence = None, pdb_id = None):
         self.sequence = sequence
-
+        self.pdb_id = pdb_id
 
     def get_from_db_via_seq(self):
         pdb_ids = search_blast_pdb(self.sequence) #zakładając pierwszy jako właściwy
@@ -122,11 +129,14 @@ class via_sequence(Nucleic_acid_database):
                 return i
             else:
                 return sequence[0]
-                
 
-szukamy = via_sequence("AACCUUCACCAAUUAGGUUCAAAUAAGUGGU")
-print szukamy.get_from_db_via_seq()
-#=======
+
+szukamy = via_sequence(pdb_id = "5KMZ")
+print szukamy.report_creator()
+
+
+
+
 
 #pdb_download("5KMZ")
 #print czytanie_bazy("5KMZ")
