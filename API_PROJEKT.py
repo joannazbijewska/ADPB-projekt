@@ -2,7 +2,7 @@
 """
 Created on Wed Oct  5 18:19:28 2016
 
-@author: michalkarlicki
+@author: michalkarlicki, gruszka, asiazbijewska
 """
 import xlrd
 import csv
@@ -31,7 +31,7 @@ def search_blast_pdb(x):
         return list_pdb_id
 
 def check_base(x):
-    with open("Documents/data_base.csv","r") as f:
+    with open("data_base.csv","r") as f:
         otw = csv.reader(f)
         for i in otw:
             if i[1] == x:
@@ -40,18 +40,14 @@ def check_base(x):
 
 
 
-class Service():
-    def __init__(self, urldb):
-        self.url = url
-
 class Nucleic_acid_database():
 
     _urldb = "http://ndbserver.rutgers.edu"
 
     def csv_from_excel(self):
-        wb = xlrd.open_workbook('aktualna_baza.xls')
+        wb = xlrd.open_workbook('NDB_updated.xls')
         sh = wb.sheet_by_name('sheet_1')
-        your_csv_file = open('data_base.csv', 'wb')
+        your_csv_file = open('NDB_database.csv', 'wb')
         wr = csv.writer(your_csv_file, quoting=csv.QUOTE_ALL)
         for rownum in xrange(sh.nrows):
             wr.writerow(sh.row_values(rownum))
@@ -60,24 +56,24 @@ class Nucleic_acid_database():
     def __init__(self, pdb_id):
         self.pdb_id = pdb_id
 
-    def data_base_download(self):
+    def download_database(self):
         url ="http://ndbserver.rutgers.edu"
         url1 = url+"/service/ndb/atlas/gallery/rna?polType=onlyRna&rnaFunc=all&protFunc=all&strGalType=rna&expMeth=all&seqType=all&galType=table&start=0&limit=50"
         query = requests.get(url1)
         tree = html.fromstring(query.content)
-        link_do_bazy = tree.xpath('//tr/td/h2/span/a[@id]/@href')
-        urllib.urlretrieve(url+link_do_bazy[0], "aktualna_baza.xls")
+        database_link = tree.xpath('//tr/td/h2/span/a[@id]/@href')
+        urllib.urlretrieve(url+database_link[0], "NDB_updated.xls")
         #url = "http://ndbserver.rutgers.edu/sessions/2c72e2ca66ef2c8cf2ddec7502c9204089715776/Result.xls"
         #urllib.urlretrieve(url, "Documents/baza.xls")
 
-    def czytanie_bazy(self):
-        with open("Documents/data_base.csv","r") as f:
+    def database_read(self):
+        with open("Documents/NDB_database.csv","r") as f:
             otw = csv.reader(f)
             for i in otw:
                 if i[1] == self.pdb_id:
                     return i
 
-    def pdb_download(self):
+    def structure_download(self):
         urldb = "http://ndbserver.rutgers.edu"
         pdb_id = self.pdb_id.lower()
         url1 = urldb+"/files/ftp/NDB/coordinates/na-nmr/pdb{}.ent.gz.".format(pdb_id)
@@ -87,9 +83,9 @@ class Nucleic_acid_database():
             urllib.urlretrieve(url1, "Documents/{}.ent.gz.".format(pdb_id))
         else:
             urllib.urlretrieve(url2, "Documents/{}.pdb1".format(pdb_id))
-        print "Sciaganie pliku pdb ".format(pdb_id)
+        print "PDB file download...".format(pdb_id)
 
-    def view_sequence(self):
+    def sequence_view(self):
         urldb = "http://ndbserver.rutgers.edu"
         url = urldb+"/service/ndb/atlas/summary?searchTarget={}".format(self.pdb_id)
         page = requests.get(url)
@@ -99,17 +95,18 @@ class Nucleic_acid_database():
 
     def report_creator(self):
         csv_from_excel()
-        plik = open("Documents/raport_{}".format(self.pdb_id), "w")
-        plik.write("Rna z numeru pdb {}\n".format(self.pdb_id))
-        Info_bazy = czytanie_bazy(pdb)
-        for i in xrange(len(Info_bazy)):
-            plik.write(Info_bazy[i]+"\n")
-        view_sequence(pdb)
-        pdb_download(pdb)
-        print "Zapisano plik pdb w folderze Documents"
-        print "Raport{}".format(self.pdb_id)
-        plik.close()
+        f = open("Documents/report_{}".format(self.pdb_id), "w")
+        f.write("RNA from PDB ID {}\n".format(self.pdb_id))
+        base_info = database_read(pdb)
+        for i in xrange(len(base_info)):
+            f.write(base_info[i]+"\n")
+        sequence_view(pdb)
+        structure_download(pdb)
+        print "PDB file saved in Documents folder"
+        print "Report{}".format(self.pdb_id)
+        f.close()
 
+#<<<<<<< HEAD
 class via_sequence(Nucleic_acid_database):
     def __init__(self, sequence, pdb_id = None):
         self.sequence = sequence
@@ -123,3 +120,16 @@ class via_sequence(Nucleic_acid_database):
                 return sequence[0]
 szukamy = via_sequence("AACCUUCACCAAUUAGGUUCAAAUAAGUGGU")
 print szukamy.get_from_db_via_seq()
+#=======
+
+#pdb_download("5KMZ")
+#print czytanie_bazy("5KMZ")
+#print view_sequence("5KMZ")
+a = Nucleic_acid_database("5KMZ")
+print search_blast_pdb(a.sequence_view())
+
+class RNA_STRAND():
+    _urldb = "http://www.rnasoft.ca/strand/"
+
+
+#>>>>>>> joannazbijewska/master
