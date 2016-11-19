@@ -12,9 +12,9 @@ from lxml import html
 import re
 
 
-def search_blast_pdb(x):
+def search_blast_pdb(sequence):
     urldb = "http://www.rcsb.org/pdb/rest"
-    url = urldb+"/getBlastPDB1?sequence={}&eCutOff=10.0&matrix=BLOSUM62&outputFormat=html".format(x)
+    url = urldb+"/getBlastPDB1?sequence={}&eCutOff=10.0&matrix=BLOSUM62&outputFormat=html".format(sequence)
     page = requests.get(url)
     tree = html.fromstring(page.content)
     sequence = tree.xpath('//pre/pre/text()')
@@ -44,6 +44,9 @@ class Nucleic_acid_database():
 
     _urldb = "http://ndbserver.rutgers.edu"
 
+    def __init__(self, pdb_id):
+        self.pdb_id = pdb_id
+
     def csv_from_excel(self):
         wb = xlrd.open_workbook('NDB_updated.xls')
         sh = wb.sheet_by_name('sheet_1')
@@ -53,8 +56,6 @@ class Nucleic_acid_database():
             wr.writerow(sh.row_values(rownum))
         your_csv_file.close()
 
-    def __init__(self, pdb_id):
-        self.pdb_id = pdb_id
 
     def download_database(self):
         url ="http://ndbserver.rutgers.edu"
@@ -63,6 +64,7 @@ class Nucleic_acid_database():
         tree = html.fromstring(query.content)
         database_link = tree.xpath('//tr/td/h2/span/a[@id]/@href')
         urllib.urlretrieve(url+database_link[0], "NDB_updated.xls")
+        csv_from_excel()
         #url = "http://ndbserver.rutgers.edu/sessions/2c72e2ca66ef2c8cf2ddec7502c9204089715776/Result.xls"
         #urllib.urlretrieve(url, "Documents/baza.xls")
 
@@ -83,7 +85,7 @@ class Nucleic_acid_database():
             urllib.urlretrieve(url1, "Documents/{}.ent.gz.".format(pdb_id))
         else:
             urllib.urlretrieve(url2, "Documents/{}.pdb1".format(pdb_id))
-        print "PDB file download...".format(pdb_id)
+        print "PDB file download {}".format(pdb_id)
 
     def sequence_view(self):
         urldb = "http://ndbserver.rutgers.edu"
@@ -108,8 +110,10 @@ class Nucleic_acid_database():
 
 #<<<<<<< HEAD
 class via_sequence(Nucleic_acid_database):
-    def __init__(self, sequence, pdb_id = None):
+
+    def __init__(self, sequence = None, pdb_id = None):
         self.sequence = sequence
+
 
     def get_from_db_via_seq(self):
         pdb_ids = search_blast_pdb(self.sequence) #zakładając pierwszy jako właściwy
@@ -118,6 +122,8 @@ class via_sequence(Nucleic_acid_database):
                 return i
             else:
                 return sequence[0]
+                
+
 szukamy = via_sequence("AACCUUCACCAAUUAGGUUCAAAUAAGUGGU")
 print szukamy.get_from_db_via_seq()
 #=======
