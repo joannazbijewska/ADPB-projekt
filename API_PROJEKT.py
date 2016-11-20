@@ -11,10 +11,17 @@ import requests
 from lxml import html
 import re
 
+def database_read(self):
+    with open("Documents/NDB_database.csv","r") as f:
+        otw = csv.reader(f)
+        for i in otw:
+            if i[1] == self.pdb_id:
+                return i
 
-def search_blast_pdb(x):
+
+def search_blast_pdb(sequence):
     urldb = "http://www.rcsb.org/pdb/rest"
-    url = urldb+"/getBlastPDB1?sequence={}&eCutOff=10.0&matrix=BLOSUM62&outputFormat=html".format(x)
+    url = urldb+"/getBlastPDB1?sequence={}&eCutOff=10.0&matrix=BLOSUM62&outputFormat=html".format(sequence)
     page = requests.get(url)
     tree = html.fromstring(page.content)
     sequence = tree.xpath('//pre/pre/text()')
@@ -30,10 +37,25 @@ def search_blast_pdb(x):
     else:
         return list_pdb_id
 
+def check_base(x):
+    with open("data_base.csv","r") as f:
+        otw = csv.reader(f)
+        for i in otw:
+            if i[1] == x:
+                return True
 
+
+
+<<<<<<< HEAD
+
+=======
+>>>>>>> joannazbijewska/master
 class Nucleic_acid_database():
 
     _urldb = "http://ndbserver.rutgers.edu"
+
+    def __init__(self, pdb_id):
+        self.pdb_id = pdb_id
 
     def csv_from_excel(self):
         wb = xlrd.open_workbook('NDB_updated.xls')
@@ -44,8 +66,6 @@ class Nucleic_acid_database():
             wr.writerow(sh.row_values(rownum))
         your_csv_file.close()
 
-    def __init__(self, pdb_id):
-        self.pdb_id = pdb_id
 
     def download_database(self):
         url ="http://ndbserver.rutgers.edu"
@@ -54,6 +74,10 @@ class Nucleic_acid_database():
         tree = html.fromstring(query.content)
         database_link = tree.xpath('//tr/td/h2/span/a[@id]/@href')
         urllib.urlretrieve(url+database_link[0], "NDB_updated.xls")
+<<<<<<< HEAD
+        csv_from_excel()
+=======
+>>>>>>> joannazbijewska/master
         #url = "http://ndbserver.rutgers.edu/sessions/2c72e2ca66ef2c8cf2ddec7502c9204089715776/Result.xls"
         #urllib.urlretrieve(url, "Documents/baza.xls")
 
@@ -74,7 +98,11 @@ class Nucleic_acid_database():
             urllib.urlretrieve(url1, "Documents/{}.ent.gz.".format(pdb_id))
         else:
             urllib.urlretrieve(url2, "Documents/{}.pdb1".format(pdb_id))
+<<<<<<< HEAD
+        print "PDB file download {}".format(pdb_id)
+=======
         print "PDB file download...".format(pdb_id)
+>>>>>>> joannazbijewska/master
 
     def sequence_view(self):
         urldb = "http://ndbserver.rutgers.edu"
@@ -85,10 +113,17 @@ class Nucleic_acid_database():
         return sequence[0]
 
     def report_creator(self):
+<<<<<<< HEAD
+
+        f = open("report_{}".format(self.pdb_id), "w")
+        f.write("RNA from PDB ID {}\n".format(self.pdb_id))
+        base_info = database_read(self.pdb_id)
+=======
         csv_from_excel()
         f = open("Documents/report_{}".format(self.pdb_id), "w")
         f.write("RNA from PDB ID {}\n".format(self.pdb_id))
         base_info = database_read(pdb)
+>>>>>>> joannazbijewska/master
         for i in xrange(len(base_info)):
             f.write(base_info[i]+"\n")
         sequence_view(pdb)
@@ -96,6 +131,31 @@ class Nucleic_acid_database():
         print "PDB file saved in Documents folder"
         print "Report{}".format(self.pdb_id)
         f.close()
+<<<<<<< HEAD
+
+
+class via_sequence(Nucleic_acid_database):
+
+    def __init__(self, sequence = None, pdb_id = None):
+        self.sequence = sequence
+        self.pdb_id = pdb_id
+
+    def get_from_db_via_seq(self):
+        pdb_ids = search_blast_pdb(self.sequence) #zakładając pierwszy jako właściwy
+        for i in pdb_ids:
+            if check_base(i) is True:
+                return i
+            else:
+                return sequence[0]
+
+
+szukamy = via_sequence(pdb_id = "5KMZ")
+print szukamy.report_creator()
+
+
+
+=======
+>>>>>>> joannazbijewska/master
 
 
 #pdb_download("5KMZ")
@@ -107,4 +167,9 @@ print search_blast_pdb(a.sequence_view())
 class RNA_STRAND():
     _urldb = "http://www.rnasoft.ca/strand/"
 
+<<<<<<< HEAD
+
+#>>>>>>> joannazbijewska/master
+=======
     
+>>>>>>> joannazbijewska/master
