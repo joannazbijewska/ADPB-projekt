@@ -44,6 +44,13 @@ def check_base(x):
             if i[1] == x:
                 return True
 
+def get_from_db_via_seq(sequence):
+    pdb_ids = search_blast_pdb(sequence) #zakładając pierwszy jako właściwy
+    for i in pdb_ids:
+        if check_base(i) is True:
+            return i
+        else:
+            return sequence[0]
 
 
 
@@ -135,26 +142,9 @@ class via_sequence(Nucleic_acid_database):
 
     def __init__(self, sequence = None, pdb_id = None):
         self.sequence = sequence
-        self.pdb_id = pdb_id
+        self.pdb_id = get_from_db_via_seq(self.sequence)
 
-    def get_from_db_via_seq(self):
-        pdb_ids = search_blast_pdb(self.sequence) #zakładając pierwszy jako właściwy
-        for i in pdb_ids:
-            if check_base(i) is True:
-                return i
-            else:
-                return sequence[0]
+    
 
-
-szukamy = via_sequence(pdb_id = "5KMZ")
-print szukamy.report_creator()
-
-
-
-
-
-#pdb_download("5KMZ")
-#print czytanie_bazy("5KMZ")
-#print view_sequence("5KMZ")
-a = Nucleic_acid_database("5KMZ")
-print search_blast_pdb(a.sequence_view())
+proba = via_sequence(sequence ="AACCUUCACCAAUUAGGUUCAAAUAAGUGGU")
+print proba.sequence_view()
