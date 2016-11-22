@@ -85,8 +85,8 @@ class Nucleic_acid_database():
         #url = "http://ndbserver.rutgers.edu/sessions/2c72e2ca66ef2c8cf2ddec7502c9204089715776/Result.xls"
         #urllib.urlretrieve(url, "Documents/baza.xls")
 
-    def database_read(self):
-        with open("Documents/NDB_database.csv","r") as f:
+    def database_read_metadata(self):
+        with open("data_base.csv","r") as f:
             otw = csv.reader(f)
             for i in otw:
                 if i[1] == self.pdb_id:
@@ -99,9 +99,9 @@ class Nucleic_acid_database():
         url2 = urldb+"/files/ftp/NDB/coordinates/na-biol/{}.pdb1".format(pdb_id)
         r = requests.get(url1)
         if r.status_code != 404:
-            urllib.urlretrieve(url1, "Documents/{}.ent.gz.".format(pdb_id))
+            urllib.urlretrieve(url1, "{}.ent.gz.".format(pdb_id))
         else:
-            urllib.urlretrieve(url2, "Documents/{}.pdb1".format(pdb_id))
+            urllib.urlretrieve(url2, "{}.pdb1".format(pdb_id))
 
         print "PDB file download {}".format(pdb_id)
 
@@ -144,7 +144,7 @@ class via_sequence(Nucleic_acid_database):
         self.sequence = sequence
         self.pdb_id = get_from_db_via_seq(self.sequence)
 
-    
+
 
 proba = via_sequence(sequence ="AACCUUCACCAAUUAGGUUCAAAUAAGUGGU")
-print proba.sequence_view()
+print proba.database_read_metadata()
