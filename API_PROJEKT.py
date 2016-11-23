@@ -20,11 +20,11 @@ def csv_from_excel():
         wr.writerow(sh.row_values(rownum))
     your_csv_file.close()
 
-def database_read(self):
+def database_read(pdb_id):
     with open("NDB_database.csv","r") as f:
         otw = csv.reader(f)
         for i in otw:
-            if i[1] == self.pdb_id:
+            if i[1] == pdb_id:
                 return i
 
 
@@ -47,7 +47,7 @@ def search_blast_pdb(sequence):
         return list_pdb_id
 
 def check_base(x):
-    with open("data_base.csv","r") as f:
+    with open("NDB_database.csv","r") as f:
         otw = csv.reader(f)
         for i in otw:
             if i[1] == x:
@@ -66,12 +66,8 @@ def get_from_db_via_seq(sequence):
 
 class Nucleic_acid_database():
 
-    _urldb = "http://ndbserver.rutgers.edu"
-
     def __init__(self, pdb_id):
         self.pdb_id = pdb_id
-
-
 
 
     def download_database(self):
@@ -84,17 +80,14 @@ class Nucleic_acid_database():
         csv_from_excel()
         return " NDB Database was updated and converted to csv file"
 
-        #url = "http://ndbserver.rutgers.edu/sessions/2c72e2ca66ef2c8cf2ddec7502c9204089715776/Result.xls"
-        #urllib.urlretrieve(url, "Documents/baza.xls")
-
     def database_read_metadata(self):
-        with open("data_base.csv","r") as f:
+        with open("NDB_database.csv","r") as f:
             otw = csv.reader(f)
             for i in otw:
                 if i[1] == self.pdb_id:
                       meta = i
-
-        return "Pdb id: {pdb}\nNbd id: {nbd}\nName of the structure: {nazwa}\nTitle of the publication: {title}\nDate of publication: {data}\nAuthors: {aut}\nMethod: {method}".format(pdb = meta[1], nazwa = meta[3], nbd = meta[0], title = meta[6], data = meta[4], aut = meta[5], method = meta[8])
+        print meta
+        return "Pdb id: {pdb}\nNbd id: {nbd}\nName of the structure: {nazwa}\nTitle of the publication: {title}\nDate of publication: {data}\nAuthors: {aut}\nMethod: {method}\nResolution: {rez}\nR value: {rvl}".format(pdb = meta[1], nazwa = meta[3], nbd = meta[0], title = meta[6], data = meta[4], aut = meta[5], method = meta[8], rez = meta[9], rvl = meta[10])
 
     def structure_download(self):
         urldb = "http://ndbserver.rutgers.edu"
@@ -127,7 +120,6 @@ class Nucleic_acid_database():
         f.write("RNA from PDB ID {}\n".format(self.pdb_id))
         base_info = database_read(self.pdb_id)
 
-        csv_from_excel()
         f = open("report_{}".format(self.pdb_id), "w")
         f.write("RNA from PDB ID {}\n".format(self.pdb_id))
         base_info = database_read(pdb)
@@ -146,9 +138,12 @@ class via_sequence(Nucleic_acid_database):
 
     def __init__(self, sequence = None, pdb_id = None):
         self.sequence = sequence
-        self.pdb_id = get_from_db_via_seq(self.sequence)
+        if pdb_id is None:
+            self.pdb_id = get_from_db_via_seq(self.sequence)
+        else:
+            self.pdb_id = pdb_id
 
 
 
-proba = via_sequence(sequence ="AACCUUCACCAAUUAGGUUCAAAUAAGUGGU")
-print proba.download_database()
+proba = via_sequence(pdb_id = "5SWE")
+print proba.database_read_metadata()
