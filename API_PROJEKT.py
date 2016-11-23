@@ -86,7 +86,7 @@ class Nucleic_acid_database():
             for i in otw:
                 if i[1] == self.pdb_id:
                       meta = i
-        print meta
+
         return "Pdb id: {pdb}\nNbd id: {nbd}\nName of the structure: {nazwa}\nTitle of the publication: {title}\nDate of publication: {data}\nAuthors: {aut}\nMethod: {method}\nResolution: {rez}\nR value: {rvl}".format(pdb = meta[1], nazwa = meta[3], nbd = meta[0], title = meta[6], data = meta[4], aut = meta[5], method = meta[8], rez = meta[9], rvl = meta[10])
 
     def structure_download(self):
@@ -113,26 +113,21 @@ class Nucleic_acid_database():
         sequence = tree.xpath('//p[@class="chain"]/text()')
         return sequence[0]
 
-    def report_creator(self):
+    def metadata_to_file(self):
 
 
         f = open("report_{}".format(self.pdb_id), "w")
-        f.write("RNA from PDB ID {}\n".format(self.pdb_id))
-        base_info = database_read(self.pdb_id)
+        with open("NDB_database.csv","r") as f:
+            otw = csv.reader(f)
+            for i in otw:
+                if i[1] == self.pdb_id:
+                      meta = i
 
-        f = open("report_{}".format(self.pdb_id), "w")
-        f.write("RNA from PDB ID {}\n".format(self.pdb_id))
-        base_info = database_read(pdb)
-
-        for i in xrange(len(base_info)):
-            f.write(base_info[i]+"\n")
-        sequence_view(pdb)
-        structure_download(pdb)
-        print "PDB file saved in Documents folder"
-        print "Report{}".format(self.pdb_id)
+        metadata = "Pdb id: {pdb}\nNbd id: {nbd}\nName of the structure: {nazwa}\nTitle of the publication: {title}\nDate of publication: {data}\nAuthors: {aut}\nMethod: {method}\nResolution: {rez}\nR value: {rvl}".format(pdb = meta[1], nazwa = meta[3], nbd = meta[0], title = meta[6], data = meta[4], aut = meta[5], method = meta[8], rez = meta[9], rvl = meta[10])
+        f.write("RNA structure from NBD\n"+metadata)
         f.close()
 
-
+        
 
 class via_sequence(Nucleic_acid_database):
 
