@@ -116,18 +116,16 @@ class Nucleic_acid_database():
     def metadata_to_file(self):
 
 
-        f = open("report_{}".format(self.pdb_id), "w")
+        
         with open("NDB_database.csv","r") as f:
             otw = csv.reader(f)
             for i in otw:
                 if i[1] == self.pdb_id:
                       meta = i
-
+        f = open("report_{}".format(self.pdb_id), "w")
         metadata = "Pdb id: {pdb}\nNbd id: {nbd}\nName of the structure: {nazwa}\nTitle of the publication: {title}\nDate of publication: {data}\nAuthors: {aut}\nMethod: {method}\nResolution: {rez}\nR value: {rvl}".format(pdb = meta[1], nazwa = meta[3], nbd = meta[0], title = meta[6], data = meta[4], aut = meta[5], method = meta[8], rez = meta[9], rvl = meta[10])
         f.write("RNA structure from NBD\n"+metadata)
         f.close()
-
-        
 
 class via_sequence(Nucleic_acid_database):
 
@@ -141,4 +139,4 @@ class via_sequence(Nucleic_acid_database):
 
 
 proba = via_sequence(pdb_id = "5SWE")
-print proba.database_read_metadata()
+print proba.metadata_to_file()
