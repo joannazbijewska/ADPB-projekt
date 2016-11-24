@@ -11,11 +11,21 @@ import requests
 from lxml import html
 import re
 
-def database_read(self):
+def csv_from_excel():
+    """ xls files converter"""
+    wb = xlrd.open_workbook('NDB_updated.xls')
+    sh = wb.sheet_by_name('sheet_1')
+    your_csv_file = open('NDB_database.csv', 'wb')
+    wr = csv.writer(your_csv_file, quoting=csv.QUOTE_ALL)
+    for rownum in xrange(sh.nrows):
+        wr.writerow(sh.row_values(rownum))
+    your_csv_file.close()
+
+def database_read(pdb_id):
     with open("NDB_database.csv","r") as f:
         otw = csv.reader(f)
         for i in otw:
-            if i[1] == self.pdb_id:
+            if i[1] == pdb_id:
                 return i
 
 
@@ -38,7 +48,7 @@ def search_blast_pdb(sequence):
         return list_pdb_id
 
 def check_base(x):
-    with open("data_base.csv","r") as f:
+    with open("NDB_database.csv","r") as f:
         otw = csv.reader(f)
         for i in otw:
             if i[1] == x:
@@ -54,45 +64,33 @@ def get_from_db_via_seq(sequence):
 
 
 
-
 class Nucleic_acid_database():
-
-    _urldb = "http://ndbserver.rutgers.edu"
 
     def __init__(self, pdb_id):
         self.pdb_id = pdb_id
 
-    def csv_from_excel(self):
-        wb = xlrd.open_workbook('NDB_updated.xls')
-        sh = wb.sheet_by_name('sheet_1')
-        your_csv_file = open('NDB_database.csv', 'wb')
-        wr = csv.writer(your_csv_file, quoting=csv.QUOTE_ALL)
-        for rownum in xrange(sh.nrows):
-            wr.writerow(sh.row_values(rownum))
-        your_csv_file.close()
-
-
     def download_database(self):
+
         url ="http://ndbserver.rutgers.edu"
         url1 = url+"/service/ndb/atlas/gallery/rna?polType=onlyRna&rnaFunc=all&protFunc=all&strGalType=rna&expMeth=all&seqType=all&galType=table&start=0&limit=50"
         query = requests.get(url1)
         tree = html.fromstring(query.content)
         database_link = tree.xpath('//tr/td/h2/span/a[@id]/@href')
         urllib.urlretrieve(url+database_link[0], "NDB_updated.xls")
-
         csv_from_excel()
-
-        #url = "http://ndbserver.rutgers.edu/sessions/2c72e2ca66ef2c8cf2ddec7502c9204089715776/Result.xls"
-        #urllib.urlretrieve(url, "Documents/baza.xls")
+        return " NDB Database was updated and converted to csv file"
 
     def database_read_metadata(self):
-        with open("data_base.csv","r") as f:
+        with open("NDB_database.csv","r") as f:
             otw = csv.reader(f)
             for i in otw:
                 if i[1] == self.pdb_id:
-                    return i
+                      meta = i
+
+        return "Pdb id: {pdb}\nNbd id: {nbd}\nName of the structure: {nazwa}\nTitle of the publication: {title}\nDate of publication: {data}\nAuthors: {aut}\nMethod: {method}\nResolution: {rez}\nR value: {rvl}".format(pdb = meta[1], nazwa = meta[3], nbd = meta[0], title = meta[6], data = meta[4], aut = meta[5], method = meta[8], rez = meta[9], rvl = meta[10])
 
     def structure_download(self):
+        """ Structure download pdb format"""
         urldb = "http://ndbserver.rutgers.edu"
         pdb_id = self.pdb_id.lower()
         url1 = urldb+"/files/ftp/NDB/coordinates/na-nmr/pdb{}.ent.gz.".format(pdb_id)
@@ -116,35 +114,27 @@ class Nucleic_acid_database():
         sequence = tree.xpath('//p[@class="chain"]/text()')
         return sequence[0]
 
-    def report_creator(self):
-
-
+    def metadata_to_file(self):
+        with open("NDB_database.csv","r") as f:
+            otw = csv.reader(f)
+            for i in otw:
+                if i[1] == self.pdb_id:
+                      meta = i
         f = open("report_{}".format(self.pdb_id), "w")
-        f.write("RNA from PDB ID {}\n".format(self.pdb_id))
-        base_info = database_read(self.pdb_id)
-
-        csv_from_excel()
-        f = open("report_{}".format(self.pdb_id), "w")
-        f.write("RNA from PDB ID {}\n".format(self.pdb_id))
-        base_info = database_read(pdb)
-
-        for i in xrange(len(base_info)):
-            f.write(base_info[i]+"\n")
-        sequence_view(pdb)
-        structure_download(pdb)
-        print "PDB file saved in Documents folder"
-        print "Report{}".format(self.pdb_id)
+        metadata = "Pdb id: {pdb}\nNbd id: {nbd}\nName of the structure: {nazwa}\nTitle of the publication: {title}\nDate of publication: {data}\nAuthors: {aut}\nMethod: {method}\nResolution: {rez}\nR value: {rvl}".format(pdb = meta[1], nazwa = meta[3], nbd = meta[0], title = meta[6], data = meta[4], aut = meta[5], method = meta[8], rez = meta[9], rvl = meta[10])
+        f.write("RNA structure from NBD\n"+metadata)
         f.close()
-
-
 
 class via_sequence(Nucleic_acid_database):
 
     def __init__(self, sequence = None, pdb_id = None):
         self.sequence = sequence
-        self.pdb_id = get_from_db_via_seq(self.sequence)
+        if pdb_id is None:
+            self.pdb_id = get_from_db_via_seq(self.sequence)
+        else:
+            self.pdb_id = pdb_id
 
 
 
-proba = via_sequence(sequence ="AACCUUCACCAAUUAGGUUCAAAUAAGUGGU")
-print proba.database_read_metadata()
+proba = via_sequence(pdb_id = "5SWE")
+print proba.metadata_to_file()
