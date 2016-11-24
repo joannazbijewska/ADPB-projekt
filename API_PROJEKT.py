@@ -12,6 +12,7 @@ from lxml import html
 import re
 
 def csv_from_excel():
+    """ xls files converter"""
     wb = xlrd.open_workbook('NDB_updated.xls')
     sh = wb.sheet_by_name('sheet_1')
     your_csv_file = open('NDB_database.csv', 'wb')
@@ -63,14 +64,13 @@ def get_from_db_via_seq(sequence):
 
 
 
-
 class Nucleic_acid_database():
 
     def __init__(self, pdb_id):
         self.pdb_id = pdb_id
 
-
     def download_database(self):
+
         url ="http://ndbserver.rutgers.edu"
         url1 = url+"/service/ndb/atlas/gallery/rna?polType=onlyRna&rnaFunc=all&protFunc=all&strGalType=rna&expMeth=all&seqType=all&galType=table&start=0&limit=50"
         query = requests.get(url1)
@@ -90,6 +90,7 @@ class Nucleic_acid_database():
         return "Pdb id: {pdb}\nNbd id: {nbd}\nName of the structure: {nazwa}\nTitle of the publication: {title}\nDate of publication: {data}\nAuthors: {aut}\nMethod: {method}\nResolution: {rez}\nR value: {rvl}".format(pdb = meta[1], nazwa = meta[3], nbd = meta[0], title = meta[6], data = meta[4], aut = meta[5], method = meta[8], rez = meta[9], rvl = meta[10])
 
     def structure_download(self):
+        """ Structure download pdb format"""
         urldb = "http://ndbserver.rutgers.edu"
         pdb_id = self.pdb_id.lower()
         url1 = urldb+"/files/ftp/NDB/coordinates/na-nmr/pdb{}.ent.gz.".format(pdb_id)
@@ -114,9 +115,6 @@ class Nucleic_acid_database():
         return sequence[0]
 
     def metadata_to_file(self):
-
-
-        
         with open("NDB_database.csv","r") as f:
             otw = csv.reader(f)
             for i in otw:
