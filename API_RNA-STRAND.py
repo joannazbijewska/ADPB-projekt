@@ -24,7 +24,7 @@ class RNA_STRAND():
         urlrna = "http://www.rnasoft.ca/strand/"
         url = urlrna+"download/RNA_STRAND_data.tar.gz"
         urllib.urlretrieve(url, "Downloads/RNA_STRAND_data.tar.gz")
-        print "RNA STRAND database downloaded to Downloads folder."
+        print("RNA STRAND database downloaded to Downloads folder.")
 
     def __init__(self, sequence):
         self.sequence = sequence
@@ -74,3 +74,5 @@ class RNA_STRAND():
             our_result[num].append(IDs[num])
         #W tej chwili our_result jest listą list wyników
         #W każdej liście na ostatnim miejscu znajduje się ID cząsteczki
+a = RNA_STRAND('GGAGACC')
+a.fetch_by_sequence()
