@@ -47,7 +47,7 @@ def search_blast_pdb(sequence):
     else:
         return list_pdb_id
 
-def check_base(x):
+def check_base(pdb_id):
     with open("NDB_database.csv","r") as f:
         otw = csv.reader(f)
         for i in otw:
@@ -70,7 +70,7 @@ class Nucleic_acid_database():
         self.pdb_id = pdb_id
 
     def download_database(self):
-
+        """ Database updater"""
         url ="http://ndbserver.rutgers.edu"
         url1 = url+"/service/ndb/atlas/gallery/rna?polType=onlyRna&rnaFunc=all&protFunc=all&strGalType=rna&expMeth=all&seqType=all&galType=table&start=0&limit=50"
         query = requests.get(url1)
@@ -81,6 +81,7 @@ class Nucleic_acid_database():
         return " NDB Database was updated and converted to csv file"
 
     def database_read_metadata(self):
+        """ Metadata reader """
         with open("NDB_database.csv","r") as f:
             otw = csv.reader(f)
             for i in otw:
@@ -107,6 +108,7 @@ class Nucleic_acid_database():
 
 
     def sequence_view(self):
+        """ Sequence view """
         urldb = "http://ndbserver.rutgers.edu"
         url = urldb+"/service/ndb/atlas/summary?searchTarget={}".format(self.pdb_id)
         page = requests.get(url)
@@ -137,4 +139,4 @@ class via_sequence(Nucleic_acid_database):
 
 
 proba = via_sequence(pdb_id = "5SWE")
-print proba.metadata_to_file()
+print proba.structure_download()
