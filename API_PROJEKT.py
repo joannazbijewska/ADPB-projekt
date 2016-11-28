@@ -2,8 +2,7 @@
 """
 Created on Wed Oct  5 18:19:28 2016
 
-__author__ "Michal Karlicki"
-__credit__ ["Gruszka", "Joanna Zbijewska"]
+@author: michalkarlicki, gruszka, asiazbijewska
 """
 import xlrd
 import csv
@@ -117,6 +116,13 @@ class Nucleic_acid_database():
         sequence = tree.xpath('//p[@class="chain"]/text()')
         return sequence[0]
 
+    def fasta_sequence(self):
+        pdb_id = self.pdb_id
+        sekwencja = self.sequence_view()
+        plik = open("plik_fasta_{}.fasta".format(pdb_id),"w")
+        plik.write(">"+pdb_id+"\n"+sekwencja) #??????
+        plik.close()
+
     def metadata_to_file(self):
         with open("NDB_database.csv","r") as f:
             otw = csv.reader(f)
@@ -140,4 +146,4 @@ class via_sequence(Nucleic_acid_database):
 
 
 proba = via_sequence(pdb_id = "5SWE")
-print proba.structure_download()
+print proba.fasta_sequence()
