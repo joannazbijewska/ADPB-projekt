@@ -2,7 +2,8 @@
 """
 Created on Wed Oct  5 18:19:28 2016
 
-@author: michalkarlicki, gruszka, asiazbijewska
+__author__ "Michal Karlicki"
+__credit__ ["Gruszka", "Joanna Zbijewska"]
 """
 import xlrd
 import csv
