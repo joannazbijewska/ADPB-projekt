@@ -113,6 +113,30 @@ class RNA_STRAND():
         plik = open("{}_sequence.fasta".format(to_save[0]),"w")
         plik.write(">"+to_save[0]+"\n"+to_save[1]) #??????
         plik.close()
+        
+    def get_structure(self):
+        id_mo = self.choose_result()
+        urlrna = "http://www.rnasoft.ca/strand/"
+        res = urlrna+"show_file.php?format=Bpseq&molecule_ID={}&check_out_the=View+the+RNA+sequence+and+secondary+structure+for+molecule+{}".format(id_mo,id_mo)
+        content = requests.get(res)
+        content = html.fromstring(content.content)
+        raw_struct = content.xpath('//div/textarea/text()')
+        raw_struct = raw_struct[0].split('\n')
+        ID = raw_struct[1].strip('# File')
+        ID = ID.strip('.ct')
+        re_hash = re.compile(r'\#')
+        raw_structure = [elem for elem in raw_struct if not re_hash.search(elem)]
+        raw_structure = raw_structure[1:]
+        raw_structure.insert(0,ID)
+        return(raw_structure)
+
+    def save_bpseq(self):
+        struct_to_save = self.get_structure()
+        with open('{}_structure.bpseq'.format(struct_to_save[0]), 'w') as bpseq:
+            for ind in range(1,len(struct_to_save)):
+                bpseq.write(struct_to_save[ind]+'\n')
+        bpseq.close()
+
 
 a = RNA_STRAND('GGAGAACUGA')
 a.save_fasta()
