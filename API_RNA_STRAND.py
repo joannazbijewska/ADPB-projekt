@@ -113,7 +113,7 @@ class RNA_STRAND():
         plik = open("{}_sequence.fasta".format(to_save[0]),"w")
         plik.write(">"+to_save[0]+"\n"+to_save[1]) #??????
         plik.close()
-        
+
     def get_structure(self):
         id_mo = self.choose_result()
         urlrna = "http://www.rnasoft.ca/strand/"
