@@ -11,7 +11,7 @@ import requests
 from lxml import html
 from prettytable import PrettyTable
 
-def split_list(to_split, size):
+def split_list(to_split, size)
     it = iter(to_split)
     item = list(itertools.islice(it, size))
     while item:
@@ -20,26 +20,27 @@ def split_list(to_split, size):
 
 class RNA_STRAND():
     """
-    This class is use to search secondary structure of RNA.
+    This class is use to search secondary structure of RNA in online RNA Strand database.
     
     The input must be string consist of sequence without whitespaces, commas, enters or another.
     """
     _urlrna = "http://www.rnasoft.ca/strand/"
 
     def download_database(self):
-        """Database updater"""
+        """Database downloader for users who think they may need it all."""
         urlrna = "http://www.rnasoft.ca/strand/"
         url = urlrna+"download/RNA_STRAND_data.tar.gz"
         urllib.urlretrieve(url, "Downloads/RNA_STRAND_data.tar.gz")
         print("RNA STRAND database downloaded to Downloads folder.")
 
     def __init__(self, sequence):
-        """Initialize with sequence to..."""
+        """Initializer of the type sequence argument for futher functions."""
         self.sequence = sequence
 
     def search_by_sequence(self):
         """
-        Give a list consist of four-element lists.
+        Database search for desired sequence.
+        Give a list consist of five-element lists.
         These elements are respectively name, type, source organism, length and ID of molecules include enter sequence.
         """
         urlrna = "http://www.rnasoft.ca/strand/"
@@ -86,7 +87,7 @@ class RNA_STRAND():
         return(our_result)
 
     def print_results(self):
-        """Print a table consist of ordinal number, name, type,
+        """Printer of a table consist of ordinal number, name, type,
         source organism, length and ID of molecules include enter sequence.
         """
         our_result = self.search_by_sequence()
@@ -99,7 +100,7 @@ class RNA_STRAND():
     def choose_result(self):
         """Interaction with user. 
         
-        Return ordinal number of molecule chosen by user.
+        Returns database ID of molecule chosen by user.
         """
         self.print_results()
         our_result = self.search_by_sequence()
@@ -110,7 +111,7 @@ class RNA_STRAND():
         return(id_mo)
 
     def get_sequence(self):
-        """Return respectively chosen molecule's ID and sequence."
+        """Returns respectively chosen molecule's ID and sequence in a list."
         """
         id_mo = self.choose_result()
         urlrna = "http://www.rnasoft.ca/strand/"
@@ -128,7 +129,7 @@ class RNA_STRAND():
         return(molecule)
 
     def save_fasta(self):
-        """Save chosen molecule's sequence in fasta format.
+        """Saver chosen molecule's sequence in fasta format.
         """
         to_save = self.get_sequence()
         plik = open("{}_sequence.fasta".format(to_save[0]),"w")
@@ -136,7 +137,7 @@ class RNA_STRAND():
         plik.close()
         
     def get_structure(self):
-        """Return chosen molecule's ID and structure.
+        """Returns chosen molecule's ID and structure in a list.
         """
         id_mo = self.choose_result()
         urlrna = "http://www.rnasoft.ca/strand/"
@@ -154,7 +155,7 @@ class RNA_STRAND():
         return(raw_structure)
 
     def save_bpseq(self):
-        """Save chosen molecule's structure in bpseq format.
+        """Saver of chosen molecule's structure in bpseq format.
         """
         struct_to_save = self.get_structure()
         with open('{}_structure.bpseq'.format(struct_to_save[0]), 'w') as bpseq:
