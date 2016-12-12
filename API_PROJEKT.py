@@ -22,6 +22,7 @@ def csv_from_excel():
     your_csv_file.close()
 
 def database_read(pdb_id):
+    """ database reader """
     with open("NDB_database.csv","r") as f:
         otw = csv.reader(f)
         for i in otw:
@@ -108,7 +109,7 @@ class Nucleic_acid_database():
 
 
     def sequence_view(self):
-        """ Sequence view """
+        """ Sequence viewer """
         urldb = "http://ndbserver.rutgers.edu"
         url = urldb+"/service/ndb/atlas/summary?searchTarget={}".format(self.pdb_id)
         page = requests.get(url)
@@ -117,6 +118,7 @@ class Nucleic_acid_database():
         return sequence[0]
 
     def fasta_sequence(self):
+        """ Use it for download sequence in fasta format """
         pdb_id = self.pdb_id
         sekwencja = self.sequence_view()
         plik = open("plik_fasta_{}.fasta".format(pdb_id),"w")
@@ -124,6 +126,7 @@ class Nucleic_acid_database():
         plik.close()
 
     def metadata_to_file(self):
+        """ Use it for download metadata about sequence or pdb_id"""
         with open("NDB_database.csv","r") as f:
             otw = csv.reader(f)
             for i in otw:
@@ -135,7 +138,6 @@ class Nucleic_acid_database():
         f.close()
 
 class via_sequence(Nucleic_acid_database):
-
     def __init__(self, sequence = None, pdb_id = None):
         self.sequence = sequence
         if pdb_id is None:
