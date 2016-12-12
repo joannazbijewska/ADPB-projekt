@@ -19,18 +19,30 @@ def split_list(to_split, size):
         item = list(itertools.islice(it, size))
 
 class RNA_STRAND():
+    """
+    This class is use to search secondary structure of RNA in online RNA Strand database.
+    
+    The input must be string consist of sequence without whitespaces, commas, enters or another.
+    """
     _urlrna = "http://www.rnasoft.ca/strand/"
 
     def download_database(self):
+        """Database downloader for users who think they may need it all."""
         urlrna = "http://www.rnasoft.ca/strand/"
         url = urlrna+"download/RNA_STRAND_data.tar.gz"
         urllib.urlretrieve(url, "Downloads/RNA_STRAND_data.tar.gz")
         print("RNA STRAND database downloaded to Downloads folder.")
 
     def __init__(self, sequence):
+        """Initializer of the type sequence argument for futher functions."""
         self.sequence = sequence
 
     def search_by_sequence(self):
+        """
+        Database search for desired sequence.
+        Give a list consist of five-element lists.
+        These elements are respectively name, type, source organism, length and ID of molecules include enter sequence.
+        """
         urlrna = "http://www.rnasoft.ca/strand/"
         search = urlrna+"search_results.php?select%5B%5D=Any+type&org=&source%5B%5D=Any+source&source_id=&select2=Any+length&first1=&last1=&exp_proven=Any&select4=Any+number&first2=&last2=&select5=Any&select_duplicate=All+molecules&seq={}&abstractshapetype=ABSTRACT_SHAPE_5&abstractshape=&Submit=Perform+search&select6=Any+number&first3=&last3=&select7=Any+number&first4=&last4=&select8=Any+number&first5=&last5=&select12=Any+number&first7=&last7=&select13=Any+number&first8=&last8=&motif=&select19=Any+number&first10=&last10=&select20=Any+number&first11=&last11=&select25=Any+number&first13=&last13=&select26=Any+number&first14=&last14=&select27=absolute&select28=Any+number&first15=&last15=&select33=Any+number&first17=&last17=&select34=Any+number&first18=&last18=&select35=average&select36=absolute&select37=Any+number&first19=&last19=&select38=Any+number&first20=&last20=&select69=Any+number&first31=&last31=&select71=bands&select72=Any+number&first32=&last32=&select73=base+pairs&select74=Any+number&first33=&last33=&select75=Any&select76=Any+number&first34=&last34=&select55=any&select_ncbp_context_2=any&select_ncbp_context_4=any&select_ncbp_context_1=any&select_ncbp_context_5=any&select56=Any+number&first26=&last26=&start=0&limit=100&sort_by=length&order=ascending".format(self.sequence)
         #Domyślne ustawienia dla tego wyszukiwania - 100 cząsteczek i ułożone wedle długości sekwencji rosnąco
@@ -76,6 +88,9 @@ class RNA_STRAND():
         return(our_result)
 
     def print_results(self):
+         """Printer of a table consist of ordinal number, name, type,
+        source organism, length and ID of molecules include enter sequence.
+        """
         our_result = self.search_by_sequence()
         t = PrettyTable(["No", "Name", "Type", "Organism", "Length", "ID"])
         for num in range(1,1+len(our_result)):
@@ -84,6 +99,10 @@ class RNA_STRAND():
         print(t)
 
     def choose_result(self):
+         """Interaction with user. 
+        
+        Returns database ID of molecule chosen by user.
+        """
         self.print_results()
         our_result = self.search_by_sequence()
         #choose_molecule = input('Which one is your molecule? Choose number:')
@@ -93,6 +112,8 @@ class RNA_STRAND():
         return(id_mo)
 
     def get_sequence(self):
+        """Returns respectively chosen molecule's ID and sequence in a list."
+        """
         id_mo = self.choose_result()
         urlrna = "http://www.rnasoft.ca/strand/"
         res = urlrna+"show_file.php?format=FASTA&molecule_ID={}&check_out_the=View+the+RNA+sequence+and+secondary+structure+for+molecule+{}".format(id_mo, id_mo)
@@ -109,12 +130,16 @@ class RNA_STRAND():
         return(molecule)
 
     def save_fasta(self):
+        """Saver chosen molecule's sequence in fasta format.
+        """
         to_save = self.get_sequence()
         plik = open("{}_sequence.fasta".format(to_save[0]),"w")
         plik.write(">"+to_save[0]+"\n"+to_save[1]) #??????
         plik.close()
 
     def get_structure(self):
+        """Returns chosen molecule's ID and structure in a list.
+        """
         id_mo = self.choose_result()
         urlrna = "http://www.rnasoft.ca/strand/"
         res = urlrna+"show_file.php?format=Bpseq&molecule_ID={}&check_out_the=View+the+RNA+sequence+and+secondary+structure+for+molecule+{}".format(id_mo,id_mo)
@@ -131,6 +156,8 @@ class RNA_STRAND():
         return(raw_structure)
 
     def save_bpseq(self):
+        """Saver of chosen molecule's structure in bpseq format.
+        """
         struct_to_save = self.get_structure()
         with open('{}_structure.bpseq'.format(struct_to_save[0]), 'w') as bpseq:
             for ind in range(1,len(struct_to_save)):
