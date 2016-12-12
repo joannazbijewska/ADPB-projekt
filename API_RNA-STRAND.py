@@ -11,7 +11,7 @@ import requests
 from lxml import html
 from prettytable import PrettyTable
 
-def split_list(to_split, size)
+def split_list(to_split, size):
     it = iter(to_split)
     item = list(itertools.islice(it, size))
     while item:
