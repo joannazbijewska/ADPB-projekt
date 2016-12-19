@@ -103,9 +103,7 @@ class Nucleic_acid_database():
         else:
             urllib.urlretrieve(url2, "{}.pdb1".format(pdb_id))
 
-        print "PDB file download {}".format(pdb_id)
-
-        print "PDB file download...".format(pdb_id)
+        return "PDB file {} is ready".format(pdb_id.upper())
 
 
     def sequence_view(self):
@@ -117,13 +115,14 @@ class Nucleic_acid_database():
         sequence = tree.xpath('//p[@class="chain"]/text()')
         return sequence[0]
 
-    def fasta_sequence(self):
-        """ Use it for download sequence in fasta format """
+    def download_fasta_sequence(self):
+        """ Downloads sequence in fasta format """
         pdb_id = self.pdb_id
         sekwencja = self.sequence_view()
         plik = open("plik_fasta_{}.fasta".format(pdb_id),"w")
         plik.write(">"+pdb_id+"\n"+sekwencja) #??????
         plik.close()
+        return "Sequence {} is ready".format(pdb_id)
 
     def metadata_to_file(self):
         """ Use it for download metadata about sequence or pdb_id"""
@@ -136,6 +135,7 @@ class Nucleic_acid_database():
         metadata = "Pdb id: {pdb}\nNbd id: {nbd}\nName of the structure: {nazwa}\nTitle of the publication: {title}\nDate of publication: {data}\nAuthors: {aut}\nMethod: {method}\nResolution: {rez}\nR value: {rvl}".format(pdb = meta[1], nazwa = meta[3], nbd = meta[0], title = meta[6], data = meta[4], aut = meta[5], method = meta[8], rez = meta[9], rvl = meta[10])
         f.write("RNA structure from NBD\n"+metadata)
         f.close()
+        return "File with metadata is ready"
 
 class via_sequence(Nucleic_acid_database):
     def __init__(self, sequence = None, pdb_id = None):
@@ -147,5 +147,5 @@ class via_sequence(Nucleic_acid_database):
 
 
 
-proba = via_sequence(pdb_id = "5SWE")
-print proba.fasta_sequence()
+#proba = via_sequence(pdb_id = "5SWE")
+#print proba.sequence_view()
