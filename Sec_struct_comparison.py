@@ -1,7 +1,8 @@
 import re
 
 class BPSEQ():
-    """docstring for ."""
+    """This class serves to parse the bpseq file format of
+    RNA secondary structure to get the base indices and base pairs"""
 
     def __init__(self, filename):
         self.filename = filename
@@ -39,14 +40,49 @@ class BPSEQ():
             pair_indices[alist[0]] = alist[2]
         return(pair_indices)
 
-    def bp_distance(self):
-        pairs_indices = self.bpseq_pairs()
-        pairs = {}
-        for key in pairs_indices:
-            value = pairs_indices[key]
-            if not value=='0':
-                pairs[key] = value
-        
+class struct_comparison():
+    """This class takes two filenames of structures in bpseq format
+    to compare."""
 
-a = BPSEQ('PDB_01121_structure')
-a.bp_distance()
+    def __init__(self, filename1, filename2):
+        self.1 = filename1
+        self.2 = filename2
+
+    def initialize(self):
+    """This function prepares structures to compare using the BPSEQ class"""
+        #Czy ja w ogole moge tak zrobic? Czy to zadziala?
+        one = BPSEQ(self.1)
+        two = BPSEQ(self.2)
+        one = one.bpseq_pairs()
+        two = two.bpseq_pairs()
+        return(list(one, two)
+
+    def bp_distances(self):
+        pairs_from_two = self.initialize()
+        one_1 = []
+        one_2 = []
+        two_1 = []
+        two_2 = []
+        for key in pairs_from_two[0]:
+            one_1.append(key)
+        for value in pairs_from_two[0]:
+            one_2.append(value)
+        for key in pairs_from_two[1]:
+            two_1.append(key)
+        for value in pairs_from_two[1]:
+            two_2.append(value)
+        list_of_distances = []
+        for n in range(len(one_1)):
+            temp = []
+            for i in range(len(two_1)):
+                temp.append(max((int(one_1[n])-int(two_1[i])),(int(one_2[n])-int(two_2[i]))))
+            list_of_distances.append(temp)
+        return(list_of_distances)
+
+    def bp_score(self):
+        list_bp_distances = self.bp_distances()
+        to_sum = []
+        for alist in list_bp_distances:
+            to_sum.append(min(alist))
+        score = sum(to_sum)
+        return(score)
