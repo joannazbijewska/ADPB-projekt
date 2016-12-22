@@ -55,7 +55,7 @@ class struct_comparison():
         two = BPSEQ(self.2)
         one = one.bpseq_pairs()
         two = two.bpseq_pairs()
-        return(list(one, two)
+        return(list(one, two))
 
     def bp_distances(self):
         pairs_from_two = self.initialize()
@@ -71,18 +71,25 @@ class struct_comparison():
             two_1.append(key)
         for value in pairs_from_two[1]:
             two_2.append(value)
-        list_of_distances = []
+        list_of_distances_1 = []
+        list_of_distances_2 = []
         for n in range(len(one_1)):
             temp = []
             for i in range(len(two_1)):
                 temp.append(max((int(one_1[n])-int(two_1[i])),(int(one_2[n])-int(two_2[i]))))
-            list_of_distances.append(temp)
-        return(list_of_distances)
+            list_of_distances_1.append(temp)
+        for n in range(len(two_1)):
+            temp = []
+            for i in range(len(one_1)):
+                temp.append(max((int(two_1[n])-int(one_1[i])),(int(two_2[n])-int(one_2[i]))))
+            list_of_distances_2.append(temp)
+        return(list(list_of_distances_1,list_of_distances_2))
 
     def bp_score(self):
         list_bp_distances = self.bp_distances()
         to_sum = []
-        for alist in list_bp_distances:
-            to_sum.append(min(alist))
+        for part in list_bp_distances:
+            for alist in part:
+                to_sum.append(min(alist))
         score = sum(to_sum)
         return(score)
