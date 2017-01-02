@@ -1,4 +1,13 @@
+# -*- coding: utf-8 -*-
+
+"""
+Calculate relaxed base pair score or simply base pair score between two structures
+saved in bpseq format.
+by: Joanna Zbijewska <asia.zbijewska@gmail.com>
+"""
+
 import re
+import math
 
 class BPSEQ():
     """This class serves to parse the bpseq file format of
@@ -86,10 +95,36 @@ class struct_comparison():
         return(list(list_of_distances_1,list_of_distances_2))
 
     def bp_score(self):
+        """Returns a list of distances between baise pairs (for nonzero distances) in two given structures"""
         list_bp_distances = self.bp_distances()
-        to_sum = []
+        score = []
         for part in list_bp_distances:
             for alist in part:
-                to_sum.append(min(alist))
-        score = sum(to_sum)
+                score.append(min(alist))
+        score.sort()
         return(score)
+
+    def return_bp_score(self):
+        """Returns the value of the base pair score - the old method of comparison
+        for secondary RNA structures"""
+        scores_list = self.bp_score()
+        bp_score = len(scores_list)
+        print('Your calculated base pare score is {}'.format(bp_score))
+
+    def rbp_score(self):
+        bp_score = self.bp_score()
+        t = input('Choose your relaxation paramter: ')
+        t = int(t)
+        if t < 0:
+            print("Wrong number. Relaxation parameter must be bigger than zero.")
+            self.rbp_score()
+        elif t == 0:
+            self.return_bp_score()
+        else:
+            possible_m_vals = []
+            for ind in range(len(bp_score)):
+                min_m = bp_score[ind]/t
+                min_m = math.floor(min_m)
+                possible_m_vals.append(min_m)
+        rbp_score = min(possible_m_vals)
+        print('Your calculated relaxed base pare score for relaxation parameter t = {} is {}'.format(t,rbp_score))
