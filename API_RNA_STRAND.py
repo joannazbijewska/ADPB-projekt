@@ -21,7 +21,7 @@ def split_list(to_split, size):
 class RNA_STRAND():
     """
     This class is use to search secondary structure of RNA in online RNA Strand database.
-    
+
     The input must be string consist of sequence without whitespaces, commas, enters or another.
     """
     _urlrna = "http://www.rnasoft.ca/strand/"
@@ -99,14 +99,14 @@ class RNA_STRAND():
         print(t)
 
     def choose_result(self):
-         """Interaction with user. 
-        
+         """Interaction with user.
+
         Returns database ID of molecule chosen by user.
         """
         self.print_results()
         our_result = self.search_by_sequence()
-        #choose_molecule = input('Which one is your molecule? Choose number:')
-        choose_molecule = int(2)
+        choose_molecule = input('Which one is your molecule? Choose number:')
+        choose_molecule = int(choose_molecule)
         mo = our_result[choose_molecule-1]
         id_mo = mo[4]
         return(id_mo)
@@ -134,7 +134,7 @@ class RNA_STRAND():
         """
         to_save = self.get_sequence()
         plik = open("{}_sequence.fasta".format(to_save[0]),"w")
-        plik.write(">"+to_save[0]+"\n"+to_save[1]) #??????
+        plik.write(">"+to_save[0]+"\n"+to_save[1])
         plik.close()
 
     def get_structure(self):
