@@ -88,7 +88,7 @@ class RNA_STRAND():
         return(our_result)
 
     def print_results(self):
-         """Printer of a table consist of ordinal number, name, type,
+        """Printer of a table consist of ordinal number, name, type,
         source organism, length and ID of molecules include enter sequence.
         """
         our_result = self.search_by_sequence()
@@ -99,13 +99,13 @@ class RNA_STRAND():
         print(t)
 
     def choose_result(self):
-         """Interaction with user.
+        """Interaction with user.
 
         Returns database ID of molecule chosen by user.
         """
         self.print_results()
         our_result = self.search_by_sequence()
-        choose_molecule = input('Which one is your molecule? Choose number:')
+        choose_molecule = input('Which one is your molecule? Choose number: ')
         choose_molecule = int(choose_molecule)
         mo = our_result[choose_molecule-1]
         id_mo = mo[4]
@@ -165,5 +165,5 @@ class RNA_STRAND():
         bpseq.close()
 
 
-a = RNA_STRAND('GGAGAACUGA')
-a.save_fasta()
+a = RNA_STRAND('UAAGCCCUA')
+a.save_bpseq()
