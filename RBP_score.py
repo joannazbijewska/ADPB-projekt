@@ -4,6 +4,8 @@
 Calculate relaxed base pair score or simply base pair score between two structures
 saved in bpseq format.
 by: Joanna Zbijewska <asia.zbijewska@gmail.com>
+On the basis of:
+Agius P., Bennett KP., Zucker M.,"Comparing RNA secondary structures using a relaxed base-pair score";RNA,2010 May,16(5):865–878
 """
 
 import re
@@ -54,17 +56,16 @@ class struct_comparison():
     to compare."""
 
     def __init__(self, filename1, filename2):
-        self.1 = filename1
-        self.2 = filename2
+        self.name1 = filename1
+        self.name2 = filename2
 
     def initialize(self):
-    """This function prepares structures to compare using the BPSEQ class"""
-        #Czy ja w ogole moge tak zrobic? Czy to zadziala?
-        one = BPSEQ(self.1)
-        two = BPSEQ(self.2)
+        """This function prepares structures to compare using the BPSEQ class"""
+        one = BPSEQ(self.name1)
+        two = BPSEQ(self.name2)
         one = one.bpseq_pairs()
         two = two.bpseq_pairs()
-        return(list(one, two))
+        return([one,two])
 
     def bp_distances(self):
         pairs_from_two = self.initialize()
@@ -85,14 +86,14 @@ class struct_comparison():
         for n in range(len(one_1)):
             temp = []
             for i in range(len(two_1)):
-                temp.append(max((int(one_1[n])-int(two_1[i])),(int(one_2[n])-int(two_2[i]))))
+                temp.append(abs(max((int(one_1[n])-int(two_1[i])),(int(one_2[n])-int(two_2[i])))))
             list_of_distances_1.append(temp)
         for n in range(len(two_1)):
             temp = []
             for i in range(len(one_1)):
-                temp.append(max((int(two_1[n])-int(one_1[i])),(int(two_2[n])-int(one_2[i]))))
+                temp.append(abs(max((int(two_1[n])-int(one_1[i])),(int(two_2[n])-int(one_2[i])))))
             list_of_distances_2.append(temp)
-        return(list(list_of_distances_1,list_of_distances_2))
+        return([list_of_distances_1,list_of_distances_2])
 
     def bp_score(self):
         """Returns a list of distances between baise pairs (for nonzero distances) in two given structures"""
@@ -101,7 +102,8 @@ class struct_comparison():
         for part in list_bp_distances:
             for alist in part:
                 score.append(min(alist))
-        score.sort()
+        score = [x for x in score if x != 0]
+        score.sort(reverse=True)
         return(score)
 
     def return_bp_score(self):
@@ -113,18 +115,27 @@ class struct_comparison():
 
     def rbp_score(self):
         bp_score = self.bp_score()
-        t = input('Choose your relaxation paramter: ')
-        t = int(t)
-        if t < 0:
-            print("Wrong number. Relaxation parameter must be bigger than zero.")
-            self.rbp_score()
-        elif t == 0:
-            self.return_bp_score()
+        print(bp_score)
+        bp_value = len(bp_score)
+        if bp_value == 0:
+            print("Structures are identical!")
         else:
-            possible_m_vals = []
-            for ind in range(len(bp_score)):
-                min_m = bp_score[ind]/t
-                min_m = math.floor(min_m)
-                possible_m_vals.append(min_m)
-        rbp_score = min(possible_m_vals)
-        print('Your calculated relaxed base pare score for relaxation parameter t = {} is {}'.format(t,rbp_score))
+            #t = input('Choose your relaxation paramter: ')
+            t = float('0.002')
+            if t < 0:
+                print("Wrong number. Relaxation parameter must be bigger than zero.")
+                self.rbp_score()
+            elif t == 0:
+                self.return_bp_score()
+            else:
+                possible_m_vals = []
+                for ind in range(len(bp_score)):
+                    min_m = bp_score[ind]/t
+                    print(min_m)
+                    if min_m < (ind+1):
+                        possible_m_vals.append(min_m)
+                    possible_m_vals = [m for m in possible_m_vals if m>0]
+                rbp_score = min(possible_m_vals)
+                print('Your calculated relaxed base pare score for relaxation parameter t = {} is {}'.format(t,rbp_score))
+a = struct_comparison('TMR_00273_structure','TMR_00200_structure')
+a.rbp_score()
