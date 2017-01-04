@@ -5,7 +5,7 @@ import os
 
 
 class API_PROJEKTfunctions(unittest.TestCase):
-
+    """ With internet connection only! """
     def test_sequence_view(self):
         example = API_PROJEKT.via_sequence(pdb_id = "5SWE")
         result = example.sequence_view()
@@ -17,7 +17,7 @@ class API_PROJEKTfunctions(unittest.TestCase):
         result = example.download_fasta_sequence()
         expected = "Sequence 5SWE is ready"
         self.assertEqual(result, expected)
-        os.remove("plik_fasta_5SWE.fasta")
+        os.remove("PDB_5SWE_sequence.fasta")
 
     def test_metadata_to_file(self):
         example = API_PROJEKT.via_sequence(pdb_id = "5SWE")
@@ -25,13 +25,19 @@ class API_PROJEKTfunctions(unittest.TestCase):
         expected = "File with metadata is ready"
         self.assertEqual(result, expected)
         os.remove("report_5SWE")
-        
+
     def test_structure_download(self):
         example = API_PROJEKT.via_sequence(pdb_id = "5SWE")
         result = example.structure_download()
         expected = "PDB file 5SWE is ready"
         self.assertEqual(result, expected)
         os.remove("5swe.pdb1")
+
+    def test_download_database(self):
+        example = API_PROJEKT.via_sequence(pdb_id = "5SWE")
+        result = example.download_database()
+        expected = "NDB Database was updated and converted to csv file"
+        self.assertEqual(result, expected)
 
 #class BiospamTestDivision(unittest.TestCase):
 

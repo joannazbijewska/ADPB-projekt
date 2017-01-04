@@ -10,6 +10,7 @@ import urllib
 import requests
 from lxml import html
 import re
+import os
 
 def csv_from_excel():
     """ xls files converter"""
@@ -103,7 +104,8 @@ class Nucleic_acid_database():
         else:
             urllib.urlretrieve(url2, "{}.pdb1".format(pdb_id))
 
-        return "PDB file {} is ready".format(pdb_id.upper())
+        print "PDB file {} is ready".format(pdb_id.upper())
+        os.rename(pdb_id+".pdb1", pdb_id+".pdb")
 
 
     def sequence_view(self):
@@ -147,5 +149,5 @@ class via_sequence(Nucleic_acid_database):
 
 
 
-#proba = via_sequence(pdb_id = "5SWE")
-#print proba.sequence_view()
+proba = via_sequence(pdb_id = "5SWE")
+print proba.structure_download()
