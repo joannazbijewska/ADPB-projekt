@@ -19,6 +19,7 @@ class BPSEQ():
         self.filename = filename
 
     def bpseq_input(self):
+        """Prepares the list of lines saved in bpseq file"""
         data = []
         with open("{}.bpseq".format(self.filename),"r") as sec_struct:
             sec_structure = sec_struct.readlines()
@@ -36,6 +37,7 @@ class BPSEQ():
         return(list_of_lists)
 
     def bpseq_indices(self):
+        """Prepares base indices for further calculations"""
         list_of_lists = self.bpseq_input()
         base_indices = {}
         for i in range(len(list_of_lists)):
@@ -44,6 +46,7 @@ class BPSEQ():
         return(base_indices)
 
     def bpseq_pairs(self):
+        """Prepares a dictionary of indices of base pairs"""
         list_of_lists = self.bpseq_input()
         pair_indices = {}
         for i in range(len(list_of_lists)):
@@ -68,6 +71,7 @@ class struct_comparison():
         return([one,two])
 
     def bp_distances(self):
+        """Calculates the distances between base pairs in both analyzed structures"""
         pairs_from_two = self.initialize()
         one_1 = []
         one_2 = []
@@ -114,13 +118,15 @@ class struct_comparison():
         print('Your calculated base pare score is {}'.format(bp_score))
 
     def rbp_score(self):
+        """After setting the relaxation parameter (t), this function calculates
+        the relaxed base pair score"""
         bp_score = self.bp_score()
         bp_value = len(bp_score)
         if bp_value == 0:
             print("Structures are identical!")
         else:
-            #t = input('Choose your relaxation paramter: ')
-            t = float('2')
+            t = input('Choose your relaxation paramter: ')
+            t = float('t')
             if t < 0:
                 print("Wrong number. Relaxation parameter must be bigger than zero.")
                 self.rbp_score()
@@ -144,5 +150,6 @@ class struct_comparison():
                     else:
                         rbp_score = min(possible_m_vals)
                         print('Your calculated relaxed base pare score for relaxation parameter t = {} is {}'.format(t,rbp_score))
+
 a = struct_comparison('TMR_00273_structure','PDB_01121_structure')
 a.rbp_score()
