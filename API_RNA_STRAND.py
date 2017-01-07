@@ -112,8 +112,7 @@ class RNA_STRAND():
         return(id_mo)
 
     def get_sequence(self):
-        """Returns respectively chosen molecule's ID and sequence in a list."
-        """
+        """Returns respectively chosen molecule's ID and sequence in a list."""
         id_mo = self.choose_result()
         urlrna = "http://www.rnasoft.ca/strand/"
         res = urlrna+"show_file.php?format=FASTA&molecule_ID={}&check_out_the=View+the+RNA+sequence+and+secondary+structure+for+molecule+{}".format(id_mo, id_mo)
