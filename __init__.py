@@ -2,7 +2,7 @@
 print "module prettytable is needed"
 
 import API_PROJEKT
-#import API_RNA_STRAND
+import API_RNA_STRAND
 import os
 
 def rmsd_calculation(x, y):
@@ -10,4 +10,4 @@ def rmsd_calculation(x, y):
     os.system("python calculate_rmsd "+x+" "+y)
 
 
-rmsd_calculation("5swe.pdb", "5swe.pdb")
+#rmsd_calculation("5swe.pdb", "5swe.pdb")
