@@ -136,8 +136,9 @@ class RNA_STRAND():
         plik.write(">"+to_save[0]+"\n"+to_save[1])
         plik.close()
 
-    def get_structure(self):
+    def get_structure_in_bpseq(self):
         """Returns chosen molecule's ID and structure in a list.
+        For further saving in bpseq format.
         """
         id_mo = self.choose_result()
         urlrna = "http://www.rnasoft.ca/strand/"
@@ -163,6 +164,43 @@ class RNA_STRAND():
                 bpseq.write(struct_to_save[ind]+'\n')
         bpseq.close()
 
+    def get_structure_in_dotpar(self):
+        """Accesses chosen molecule's dot-parentheses structure for further saving"""
+        id_mo = self.choose_result()
+        urlrna = "http://www.rnasoft.ca/strand/"
+        res = urlrna+"show_file.php?format=Dot-parentheses&molecule_ID={}&check_out_the=View+the+RNA+sequence+and+secondary+structure+for+molecule+{}".format(id_mo,id_mo)
+        content = requests.get(res)
+        content = html.fromstring(content.content)
+        raw_struct = content.xpath('//div/textarea/text()')
+        raw_struct = raw_struct[0].split('\n')
+        re1 = re.compile(r'\.')
+        re2 = re.compile(r'\(')
+        re3 = re.compile(r'\)')
+        dp = [re1,re2,re3]
+        raw_structure = [x for x in raw_struct if any(regex.match(x) for regex in dp)]
+        letters = '([AUGC])\w+'
+        sequence = []
+        for y in raw_struct:
+            match = re.match(letters,y)
+            if match:
+                sequence.append(match.group(0))
+        name = raw_struct[1]
+        name = name.strip('# File ')
+        name = name.strip('.dp')
+        raw_structure.insert(0,name)
+        return([raw_structure,sequence])
+
+    def save_dot_parentheses(self):
+        list_to_save = self.get_structure_in_dotpar()
+        struct_to_save = list_to_save[0]
+        seq_to_save = list_to_save[1]
+        with open('{}_structure.dp'.format(struct_to_save[0]),'w') as dotpar:
+            for i in range(1,len(seq_to_save)):
+                dotpar.write(seq_to_save[i]+'\n')
+            for e in range(1,len(struct_to_save)):
+                dotpar.write(struct_to_save[e]+'\n')
+        dotpar.close()
+
 
 a = RNA_STRAND('UAAGCCCUA')
-a.save_bpseq()
+a.save_dot_parentheses()
