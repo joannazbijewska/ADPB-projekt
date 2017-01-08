@@ -154,5 +154,5 @@ class via_sequence(Nucleic_acid_database):
 
 
 
-proba = via_sequence(pdb_id = "5SWE")
-print proba.structure_download()
+#proba = via_sequence(pdb_id = "5SWE")
+#print proba.structure_download()
