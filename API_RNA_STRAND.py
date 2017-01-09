@@ -128,7 +128,7 @@ class RNA_STRAND():
         molecule = [id_mo,seq]
         return(molecule)
 
-    def save_fasta(self):
+    def download_fasta_sequence(self):
         """Saver chosen molecule's sequence in fasta format.
         """
         to_save = self.get_sequence()
@@ -154,7 +154,7 @@ class RNA_STRAND():
         raw_structure.insert(0,ID)
         return(raw_structure)
 
-    def save_bpseq(self):
+    def download_bpseq_structure(self):
         """Saver of chosen molecule's structure in bpseq format.
         """
         struct_to_save = self.get_structure()

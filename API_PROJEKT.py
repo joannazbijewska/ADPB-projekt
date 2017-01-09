@@ -2,7 +2,7 @@
 """
 Created on Wed Oct  5 18:19:28 2016
 
-@author: michalkarlicki, gruszka, asiazbijewska
+___author__: "Michal Karlicki, Gruszka, Asia Zbijewska"
 """
 import xlrd
 import csv
@@ -94,7 +94,7 @@ class Nucleic_acid_database():
 
         return "Pdb id: {pdb}\nNbd id: {nbd}\nName of the structure: {nazwa}\nTitle of the publication: {title}\nDate of publication: {data}\nAuthors: {aut}\nMethod: {method}\nResolution: {rez}\nR value: {rvl}".format(pdb = meta[1], nazwa = meta[3], nbd = meta[0], title = meta[6], data = meta[4], aut = meta[5], method = meta[8], rez = meta[9], rvl = meta[10])
 
-    def structure_download(self):
+    def download_pdb_structure(self):
         """Structure downloader in pdb format"""
         urldb = "http://ndbserver.rutgers.edu"
         pdb_id = self.pdb_id.lower()
@@ -105,12 +105,11 @@ class Nucleic_acid_database():
             urllib.urlretrieve(url1, "{}.ent.gz.".format(pdb_id))
         else:
             urllib.urlretrieve(url2, "{}.pdb1".format(pdb_id))
-
         print "PDB file {} is ready".format(pdb_id.upper())
         os.rename(pdb_id+".pdb1", pdb_id+".pdb")
 
 
-    def sequence_view(self):
+    def get_sequence(self):
         """Sequence viewer for desired PDB ID"""
         urldb = "http://ndbserver.rutgers.edu"
         url = urldb+"/service/ndb/atlas/summary?searchTarget={}".format(self.pdb_id)
@@ -124,7 +123,7 @@ class Nucleic_acid_database():
         pdb_id = self.pdb_id
         sekwencja = self.sequence_view()
         plik = open("plik_fasta_{}.fasta".format(pdb_id),"w")
-        plik.write(">"+pdb_id+"\n"+sekwencja) #??????
+        plik.write(">"+pdb_id+"\n"+sekwencja)
         plik.close()
         return "Sequence {} is ready".format(pdb_id)
 
@@ -144,7 +143,7 @@ class Nucleic_acid_database():
 class via_sequence(Nucleic_acid_database):
     """This class inherites form the Nucleic_acid_database class and enables searching and downloading
     from NDB database via sequence"""
-    
+
     def __init__(self, sequence = None, pdb_id = None):
         self.sequence = sequence
         if pdb_id is None:
