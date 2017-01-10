@@ -164,5 +164,5 @@ class RNA_STRAND():
         bpseq.close()
 
 
-a = RNA_STRAND('UAAGCCCUA')
-a.save_bpseq()
+#a = RNA_STRAND('UAAGCCCUA')
+#a.download_bpseq_structure()
