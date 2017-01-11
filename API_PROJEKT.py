@@ -82,7 +82,7 @@ class Nucleic_acid_database():
         database_link = tree.xpath('//tr/td/h2/span/a[@id]/@href')
         urllib.urlretrieve(url+database_link[0], "NDB_updated.xls")
         csv_from_excel()
-        return " NDB Database was updated and converted to csv file"
+        return "NDB Database was updated and converted to csv file"
 
     def database_read_metadata(self):
         """Metadata reader """
@@ -105,8 +105,8 @@ class Nucleic_acid_database():
             urllib.urlretrieve(url1, "{}.ent.gz.".format(pdb_id))
         else:
             urllib.urlretrieve(url2, "{}.pdb1".format(pdb_id))
-        print "PDB file {} is ready".format(pdb_id.upper())
         os.rename(pdb_id+".pdb1", pdb_id+".pdb")
+        return "PDB file {} is ready".format(pdb_id.upper())
 
 
     def get_sequence(self):
@@ -121,8 +121,8 @@ class Nucleic_acid_database():
     def download_fasta_sequence(self):
         """Sequence download in fasta format for desired PDB ID"""
         pdb_id = self.pdb_id
-        sekwencja = self.sequence_view()
-        plik = open("plik_fasta_{}.fasta".format(pdb_id),"w")
+        sekwencja = self.get_sequence()
+        plik = open("PDB_{}_sequence.fasta".format(pdb_id),"w")
         plik.write(">"+pdb_id+"\n"+sekwencja)
         plik.close()
         return "Sequence {} is ready".format(pdb_id)
