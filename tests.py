@@ -5,7 +5,7 @@ import os
 
 
 class API_PROJEKTfunctions(unittest.TestCase):
-    """ With internet connection only! """
+    """ The internet connection is necessary  """
     def test_getsequence(self):
         example = API_PROJEKT.via_sequence(pdb_id = "5SWE")
         result = example.get_sequence()
@@ -39,7 +39,7 @@ class API_PROJEKTfunctions(unittest.TestCase):
         expected = "NDB Database was updated and converted to csv file"
         self.assertEqual(result, expected)
 
-#class BiospamTestDivision(unittest.TestCase):
+#class ApiRNASTRAND(unittest.TestCase):
 
 #    def test_division1(self):
 #        result = Biospam.division(3.0, 2.0)

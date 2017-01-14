@@ -11,6 +11,10 @@ import requests
 from lxml import html
 import re
 import os
+from Bio.Seq import Seq
+from Bio.SeqRecord import SeqRecord
+from Bio.Alphabet import IUPAC
+from Bio import SeqIO
 
 def csv_from_excel():
     """Xls files converter"""
@@ -56,6 +60,8 @@ def check_base(pdb_id):
         for i in otw:
             if i[1] == x:
                 return True
+            else:
+                return "No records found"
 
 def get_from_db_via_seq(sequence):
     pdb_ids = search_blast_pdb(sequence) #zakładając pierwszy jako właściwy
@@ -69,6 +75,7 @@ def get_from_db_via_seq(sequence):
 
 class Nucleic_acid_database():
     """This class serves to access NDB database, download it, search it and download single files"""
+    _urlna = "http://ndbserver.rutgers.edu"
 
     def __init__(self, pdb_id):
         self.pdb_id = pdb_id
@@ -109,36 +116,54 @@ class Nucleic_acid_database():
         return "PDB file {} is ready".format(pdb_id.upper())
 
 
-    def get_sequence(self):
+    def get_seq_record(self):
         """Sequence viewer for desired PDB ID"""
         urldb = "http://ndbserver.rutgers.edu"
-        url = urldb+"/service/ndb/atlas/summary?searchTarget={}".format(self.pdb_id)
+        pdb_id = self.pdb_id
+        url = urldb+"/service/ndb/atlas/summary?searchTarget={}".format(pdb_id)
         page = requests.get(url)
         tree = html.fromstring(page.content)
         sequence = tree.xpath('//p[@class="chain"]/text()')
-        return sequence[0]
+        with open("NDB_database.csv","r") as f:
+            opened = csv.reader(f)
+            for i in opened:
+                if i[1] == pdb_id:
+                    meta = i
+        record = SeqRecord(Seq(sequence[0],IUPAC.ambiguous_rna), id=pdb_id, name = "RNA sequence", description=meta[3])
+        return record
 
     def download_fasta_sequence(self):
         """Sequence download in fasta format for desired PDB ID"""
         pdb_id = self.pdb_id
-        sekwencja = self.get_sequence()
-        plik = open("PDB_{}_sequence.fasta".format(pdb_id),"w")
-        plik.write(">"+pdb_id+"\n"+sekwencja)
-        plik.close()
+        sequence = self.get_seq_record()
+        with open("{}_fasta.fasta".format(pdb_id),"w") as f:
+            SeqIO.write(sequence, f, "fasta")
         return "Sequence {} is ready".format(pdb_id)
 
     def metadata_to_file(self):
         """Metadata download for specified sequence or PDB ID"""
+        pdb_id = self.pdb_id
         with open("NDB_database.csv","r") as f:
             otw = csv.reader(f)
             for i in otw:
-                if i[1] == self.pdb_id:
+                if i[1] == pdb_id:
                       meta = i
-        f = open("report_{}".format(self.pdb_id), "w")
+        f = open("report_{}".format(pdb_id), "w")
         metadata = "Pdb id: {pdb}\nNbd id: {nbd}\nName of the structure: {nazwa}\nTitle of the publication: {title}\nDate of publication: {data}\nAuthors: {aut}\nMethod: {method}\nResolution: {rez}\nR value: {rvl}".format(pdb = meta[1], nazwa = meta[3], nbd = meta[0], title = meta[6], data = meta[4], aut = meta[5], method = meta[8], rez = meta[9], rvl = meta[10])
         f.write("RNA structure from NBD\n"+metadata)
         f.close()
         return "File with metadata is ready"
+
+    def metadata(self):
+        """Unable to view metadata for specified sequence or PDB ID"""
+        with open("NDB_database.csv","r") as f:
+            pdb_id = self.pdb_id
+            opened = csv.reader(f)
+            for i in opened:
+                if i[1] == pdb_id:
+                    meta = i
+            information = "Pdb id: {pdb}\nNbd id: {nbd}\nName of the structure: {nazwa}\nTitle of the publication: {title}\nDate of publication: {data}\nAuthors: {aut}\nMethod: {method}\nResolution: {rez}\nR value: {rvl}".format(pdb = meta[1], nazwa = meta[3], nbd = meta[0], title = meta[6], data = meta[4], aut = meta[5], method = meta[8], rez = meta[9], rvl = meta[10])
+            return information
 
 class via_sequence(Nucleic_acid_database):
     """This class inherites form the Nucleic_acid_database class and enables searching and downloading
@@ -154,4 +179,4 @@ class via_sequence(Nucleic_acid_database):
 
 
 #proba = via_sequence(pdb_id = "5SWE")
-#print proba.structure_download()
+#print proba.download_fasta_sequence()
