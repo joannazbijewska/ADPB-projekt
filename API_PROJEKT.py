@@ -136,9 +136,9 @@ class Nucleic_acid_database():
         """Sequence download in fasta format for desired PDB ID"""
         pdb_id = self.pdb_id
         sequence = self.get_seq_record()
-        with open("{}_fasta.fasta".format(pdb_id),"w") as f:
+        with open("{}_sequence.fasta".format(pdb_id),"w") as f:
             SeqIO.write(sequence, f, "fasta")
-        return "Sequence {} is ready".format(pdb_id)
+        return "Fasta file is ready"
 
     def metadata_to_file(self):
         """Metadata download for specified sequence or PDB ID"""
