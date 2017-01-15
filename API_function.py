@@ -7,6 +7,10 @@ __author__ = "Joanna Zbijewska"
 import sys
 import API_RNA_STRAND
 import API_PROJEKT
+<<<<<<< HEAD
+
+=======
+>>>>>>> origin/master
 
 class RNA_API():
     """RNA_API is a class to combine two API classes for downloading RNA structures and sequneces."""

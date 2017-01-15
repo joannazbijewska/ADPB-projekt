@@ -10,6 +10,10 @@ import urllib
 import requests
 from lxml import html
 from prettytable import PrettyTable
+from Bio.Seq import Seq
+from Bio.SeqRecord import SeqRecord
+from Bio.Alphabet import IUPAC
+from Bio import SeqIO
 
 def split_list(to_split, size):
     it = iter(to_split)
@@ -125,16 +129,17 @@ class RNA_STRAND():
             match = re.match(letters,y)
             if match:
                 seq = match.group(0)
-        molecule = [id_mo,seq]
+        molecule = SeqRecord(Seq(seq,IUPAC.ambiguous_rna), id=id_mo, name = "RNA sequence", description="None")
         return(molecule)
 
     def download_fasta_sequence(self):
         """Saver chosen molecule's sequence in fasta format.
         """
         to_save = self.get_sequence()
-        plik = open("{}_sequence.fasta".format(to_save[0]),"w")
-        plik.write(">"+to_save[0]+"\n"+to_save[1])
-        plik.close()
+        id_mo = self.choose_result()
+        with open("{}_sequence.fasta".format(id_mo),"w") as f:
+                SeqIO.write(to_save, f, "fasta")
+        return("Fasta file is ready")
 
     def get_structure(self):
         """Returns chosen molecule's ID and structure in a list.
