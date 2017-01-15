@@ -4,6 +4,8 @@ print "module prettytable is needed"
 import API_PROJEKT
 import API_RNA_STRAND
 import os
+import RNA_API
+import RBP_score
 
 def rmsd_calculation(x, y):
     """ Enter two pdb files """

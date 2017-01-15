@@ -31,7 +31,7 @@ class RNA_STRAND():
         urlrna = "http://www.rnasoft.ca/strand/"
         url = urlrna+"download/RNA_STRAND_data.tar.gz"
         urllib.urlretrieve(url, "Downloads/RNA_STRAND_data.tar.gz")
-        print("RNA STRAND database downloaded to Downloads folder.")
+        return ("RNA STRAND database downloaded to Downloads folder.")
 
     def __init__(self, sequence):
         """Initializer of the type sequence argument for futher functions."""

@@ -5,10 +5,10 @@ import os
 
 
 class API_PROJEKTfunctions(unittest.TestCase):
-    """ With internet connection only! """
-    def test_sequence_view(self):
+    """ The internet connection is necessary  """
+    def test_getsequence(self):
         example = API_PROJEKT.via_sequence(pdb_id = "5SWE")
-        result = example.sequence_view()
+        result = example.get_sequence()
         sequence = "GGGAAGAUAUAAUCCUAAUGAUAUGGUUUGGGAGUUUCUACCAAGAGCCUUAAACUCUUGAUUAUCUUCCC"
         self.assertEqual(result, sequence)
 
@@ -28,10 +28,10 @@ class API_PROJEKTfunctions(unittest.TestCase):
 
     def test_structure_download(self):
         example = API_PROJEKT.via_sequence(pdb_id = "5SWE")
-        result = example.structure_download()
+        result = example.download_pdb_structure()
         expected = "PDB file 5SWE is ready"
         self.assertEqual(result, expected)
-        os.remove("5swe.pdb1")
+        os.remove("5swe.pdb")
 
     def test_download_database(self):
         example = API_PROJEKT.via_sequence(pdb_id = "5SWE")
@@ -39,7 +39,7 @@ class API_PROJEKTfunctions(unittest.TestCase):
         expected = "NDB Database was updated and converted to csv file"
         self.assertEqual(result, expected)
 
-#class BiospamTestDivision(unittest.TestCase):
+#class ApiRNASTRAND(unittest.TestCase):
 
 #    def test_division1(self):
 #        result = Biospam.division(3.0, 2.0)
