@@ -2,7 +2,8 @@
 """
 Created on Wed Oct  5 18:19:28 2016
 
-___author__: "Michal Karlicki, Gruszka, Asia Zbijewska"
+Author: "Michal Karlicki"
+Credits: "Gruszka, Asia Zbijewska"
 """
 import xlrd
 import csv
