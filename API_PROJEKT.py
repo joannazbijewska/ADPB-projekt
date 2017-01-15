@@ -2,7 +2,7 @@
 """
 Created on Wed Oct  5 18:19:28 2016
 
-@author: michalkarlicki, gruszka, asiazbijewska
+___author__: "Michal Karlicki, Gruszka, Asia Zbijewska"
 """
 import xlrd
 import csv
@@ -10,11 +10,35 @@ import urllib
 import requests
 from lxml import html
 import re
+import os
+from Bio.Seq import Seq
+from Bio.SeqRecord import SeqRecord
+from Bio.Alphabet import IUPAC
+from Bio import SeqIO
+
+def csv_from_excel():
+    """Xls files converter"""
+    wb = xlrd.open_workbook('NDB_updated.xls')
+    sh = wb.sheet_by_name('sheet_1')
+    your_csv_file = open('NDB_database.csv', 'wb')
+    wr = csv.writer(your_csv_file, quoting=csv.QUOTE_ALL)
+    for rownum in xrange(sh.nrows):
+        wr.writerow(sh.row_values(rownum))
+    your_csv_file.close()
+
+def database_read(pdb_id):
+    """Database reader"""
+    with open("NDB_database.csv","r") as f:
+        otw = csv.reader(f)
+        for i in otw:
+            if i[1] == pdb_id:
+                return i
 
 
-def search_blast_pdb(x):
+def search_blast_pdb(sequence):
+    """Searching through the database using desired sequence"""
     urldb = "http://www.rcsb.org/pdb/rest"
-    url = urldb+"/getBlastPDB1?sequence={}&eCutOff=10.0&matrix=BLOSUM62&outputFormat=html".format(x)
+    url = urldb+"/getBlastPDB1?sequence={}&eCutOff=10.0&matrix=BLOSUM62&outputFormat=html".format(sequence)
     page = requests.get(url)
     tree = html.fromstring(page.content)
     sequence = tree.xpath('//pre/pre/text()')
@@ -30,81 +54,129 @@ def search_blast_pdb(x):
     else:
         return list_pdb_id
 
+def check_base(pdb_id):
+    with open("NDB_database.csv","r") as f:
+        otw = csv.reader(f)
+        for i in otw:
+            if i[1] == x:
+                return True
+            else:
+                return "No records found"
+
+def get_from_db_via_seq(sequence):
+    pdb_ids = search_blast_pdb(sequence) #zakładając pierwszy jako właściwy
+    for i in pdb_ids:
+        if check_base(i) is True:
+            return i
+        else:
+            return sequence[0]
+
+
 
 class Nucleic_acid_database():
-
-    _urldb = "http://ndbserver.rutgers.edu"
-
-    def csv_from_excel(self):
-        wb = xlrd.open_workbook('NDB_updated.xls')
-        sh = wb.sheet_by_name('sheet_1')
-        your_csv_file = open('NDB_database.csv', 'wb')
-        wr = csv.writer(your_csv_file, quoting=csv.QUOTE_ALL)
-        for rownum in xrange(sh.nrows):
-            wr.writerow(sh.row_values(rownum))
-        your_csv_file.close()
+    """This class serves to access NDB database, download it, search it and download single files"""
+    _urlna = "http://ndbserver.rutgers.edu"
 
     def __init__(self, pdb_id):
         self.pdb_id = pdb_id
 
     def download_database(self):
+        """Database updater"""
         url ="http://ndbserver.rutgers.edu"
         url1 = url+"/service/ndb/atlas/gallery/rna?polType=onlyRna&rnaFunc=all&protFunc=all&strGalType=rna&expMeth=all&seqType=all&galType=table&start=0&limit=50"
         query = requests.get(url1)
         tree = html.fromstring(query.content)
         database_link = tree.xpath('//tr/td/h2/span/a[@id]/@href')
         urllib.urlretrieve(url+database_link[0], "NDB_updated.xls")
-        #url = "http://ndbserver.rutgers.edu/sessions/2c72e2ca66ef2c8cf2ddec7502c9204089715776/Result.xls"
-        #urllib.urlretrieve(url, "Documents/baza.xls")
+        csv_from_excel()
+        return "NDB Database was updated and converted to csv file"
 
-    def database_read(self):
-        with open("Documents/NDB_database.csv","r") as f:
+    def database_read_metadata(self):
+        """Metadata reader """
+        with open("NDB_database.csv","r") as f:
             otw = csv.reader(f)
             for i in otw:
                 if i[1] == self.pdb_id:
-                    return i
+                      meta = i
 
-    def structure_download(self):
+        return "Pdb id: {pdb}\nNbd id: {nbd}\nName of the structure: {nazwa}\nTitle of the publication: {title}\nDate of publication: {data}\nAuthors: {aut}\nMethod: {method}\nResolution: {rez}\nR value: {rvl}".format(pdb = meta[1], nazwa = meta[3], nbd = meta[0], title = meta[6], data = meta[4], aut = meta[5], method = meta[8], rez = meta[9], rvl = meta[10])
+
+    def download_pdb_structure(self):
+        """Structure downloader in pdb format"""
         urldb = "http://ndbserver.rutgers.edu"
         pdb_id = self.pdb_id.lower()
         url1 = urldb+"/files/ftp/NDB/coordinates/na-nmr/pdb{}.ent.gz.".format(pdb_id)
         url2 = urldb+"/files/ftp/NDB/coordinates/na-biol/{}.pdb1".format(pdb_id)
         r = requests.get(url1)
         if r.status_code != 404:
-            urllib.urlretrieve(url1, "Documents/{}.ent.gz.".format(pdb_id))
+            urllib.urlretrieve(url1, "{}.ent.gz.".format(pdb_id))
         else:
-            urllib.urlretrieve(url2, "Documents/{}.pdb1".format(pdb_id))
-        print "PDB file download...".format(pdb_id)
+            urllib.urlretrieve(url2, "{}.pdb1".format(pdb_id))
+        os.rename(pdb_id+".pdb1", pdb_id+".pdb")
+        return "PDB file {} is ready".format(pdb_id.upper())
 
-    def sequence_view(self):
+
+    def get_seq_record(self):
+        """Sequence viewer for desired PDB ID"""
         urldb = "http://ndbserver.rutgers.edu"
-        url = urldb+"/service/ndb/atlas/summary?searchTarget={}".format(self.pdb_id)
+        pdb_id = self.pdb_id
+        url = urldb+"/service/ndb/atlas/summary?searchTarget={}".format(pdb_id)
         page = requests.get(url)
         tree = html.fromstring(page.content)
         sequence = tree.xpath('//p[@class="chain"]/text()')
-        return sequence[0]
+        with open("NDB_database.csv","r") as f:
+            opened = csv.reader(f)
+            for i in opened:
+                if i[1] == pdb_id:
+                    meta = i
+        record = SeqRecord(Seq(sequence[0],IUPAC.ambiguous_rna), id=pdb_id, name = "RNA sequence", description=meta[3])
+        return record
 
-    def report_creator(self):
-        csv_from_excel()
-        f = open("Documents/report_{}".format(self.pdb_id), "w")
-        f.write("RNA from PDB ID {}\n".format(self.pdb_id))
-        base_info = database_read(pdb)
-        for i in xrange(len(base_info)):
-            f.write(base_info[i]+"\n")
-        sequence_view(pdb)
-        structure_download(pdb)
-        print "PDB file saved in Documents folder"
-        print "Report{}".format(self.pdb_id)
+    def download_fasta_sequence(self):
+        """Sequence download in fasta format for desired PDB ID"""
+        pdb_id = self.pdb_id
+        sequence = self.get_seq_record()
+        with open("{}_fasta.fasta".format(pdb_id),"w") as f:
+            SeqIO.write(sequence, f, "fasta")
+        return "Sequence {} is ready".format(pdb_id)
+
+    def metadata_to_file(self):
+        """Metadata download for specified sequence or PDB ID"""
+        pdb_id = self.pdb_id
+        with open("NDB_database.csv","r") as f:
+            otw = csv.reader(f)
+            for i in otw:
+                if i[1] == pdb_id:
+                      meta = i
+        f = open("report_{}".format(pdb_id), "w")
+        metadata = "Pdb id: {pdb}\nNbd id: {nbd}\nName of the structure: {nazwa}\nTitle of the publication: {title}\nDate of publication: {data}\nAuthors: {aut}\nMethod: {method}\nResolution: {rez}\nR value: {rvl}".format(pdb = meta[1], nazwa = meta[3], nbd = meta[0], title = meta[6], data = meta[4], aut = meta[5], method = meta[8], rez = meta[9], rvl = meta[10])
+        f.write("RNA structure from NBD\n"+metadata)
         f.close()
+        return "File with metadata is ready"
+
+    def metadata(self):
+        """Unable to view metadata for specified sequence or PDB ID"""
+        with open("NDB_database.csv","r") as f:
+            pdb_id = self.pdb_id
+            opened = csv.reader(f)
+            for i in opened:
+                if i[1] == pdb_id:
+                    meta = i
+            information = "Pdb id: {pdb}\nNbd id: {nbd}\nName of the structure: {nazwa}\nTitle of the publication: {title}\nDate of publication: {data}\nAuthors: {aut}\nMethod: {method}\nResolution: {rez}\nR value: {rvl}".format(pdb = meta[1], nazwa = meta[3], nbd = meta[0], title = meta[6], data = meta[4], aut = meta[5], method = meta[8], rez = meta[9], rvl = meta[10])
+            return information
+
+class via_sequence(Nucleic_acid_database):
+    """This class inherites form the Nucleic_acid_database class and enables searching and downloading
+    from NDB database via sequence"""
+
+    def __init__(self, sequence = None, pdb_id = None):
+        self.sequence = sequence
+        if pdb_id is None:
+            self.pdb_id = get_from_db_via_seq(self.sequence)
+        else:
+            self.pdb_id = pdb_id
 
 
-#pdb_download("5KMZ")
-#print czytanie_bazy("5KMZ")
-#print view_sequence("5KMZ")
-a = Nucleic_acid_database("5KMZ")
-print search_blast_pdb(a.sequence_view())
 
-class RNA_STRAND():
-    _urldb = "http://www.rnasoft.ca/strand/"
-
-    
+#proba = via_sequence(pdb_id = "5SWE")
+#print proba.download_fasta_sequence()
