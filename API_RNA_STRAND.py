@@ -31,7 +31,7 @@ class RNA_STRAND():
     _urlrna = "http://www.rnasoft.ca/strand/"
 
     def download_database(self):
-        """Database downloader for users who think they may need it all."""
+        """RNA Strand database downloader for users who think they may need it all."""
         urlrna = "http://www.rnasoft.ca/strand/"
         url = urlrna+"download/RNA_STRAND_data.tar.gz"
         urllib.urlretrieve(url, "RNA_STRAND_data.tar.gz")
@@ -43,7 +43,7 @@ class RNA_STRAND():
 
     def search_by_sequence(self):
         """
-        Database search for desired sequence.
+        RNA Strand database search for desired sequence.
         Give a list consist of five-element lists.
         These elements are respectively name, type, source organism, length and ID of molecules include enter sequence.
         """
@@ -105,7 +105,9 @@ class RNA_STRAND():
     def choose_result(self):
         """Interaction with user.
 
-        Returns database ID of molecule chosen by user.
+        Returns RNA Strand database ID of molecule chosen by user.
+        Choose is based on data about molecule include enter sequence (look print_result())
+
         """
         self.print_results()
         our_result = self.search_by_sequence()
@@ -116,7 +118,7 @@ class RNA_STRAND():
         return(id_mo)
 
     def get_sequence(self):
-        """Returns respectively chosen molecule's ID and sequence in a list."""
+        """Returns respectively chosen molecule's (look choose_result and print_results) ID and sequence in a list."""
         id_mo = self.choose_result()
         urlrna = "http://www.rnasoft.ca/strand/"
         res = urlrna+"show_file.php?format=FASTA&molecule_ID={}&check_out_the=View+the+RNA+sequence+and+secondary+structure+for+molecule+{}".format(id_mo, id_mo)
@@ -133,7 +135,7 @@ class RNA_STRAND():
         return(molecule)
 
     def download_fasta_sequence(self):
-        """Saver chosen molecule's sequence in fasta format.
+        """Saver chosen molecule's (look choose_result and print_results) sequence in fasta format.
         """
         to_save = self.get_sequence()
         id_mo = self.choose_result()
@@ -142,7 +144,7 @@ class RNA_STRAND():
         return("Fasta file is ready.")
 
     def get_structure(self):
-        """Returns chosen molecule's ID and structure in a list.
+        """Returns chosen molecule's (look choose_result and print_results) ID and structure in a list.
         """
         id_mo = self.choose_result()
         urlrna = "http://www.rnasoft.ca/strand/"
@@ -160,7 +162,7 @@ class RNA_STRAND():
         return(raw_structure)
 
     def download_bpseq_structure(self):
-        """Saver of chosen molecule's structure in bpseq format.
+        """Saver of chosen molecule's (look choose_result and print_results) structure in bpseq format.
         """
         struct_to_save = self.get_structure()
         with open('{}_structure.bpseq'.format(struct_to_save[0]), 'w') as bpseq:
