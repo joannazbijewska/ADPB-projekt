@@ -34,7 +34,7 @@ class RNA_STRAND():
         """Database downloader for users who think they may need it all."""
         urlrna = "http://www.rnasoft.ca/strand/"
         url = urlrna+"download/RNA_STRAND_data.tar.gz"
-        urllib.urlretrieve(url, "Downloads/RNA_STRAND_data.tar.gz")
+        urllib.urlretrieve(url, "RNA_STRAND_data.tar.gz")
         return ("RNA STRAND database downloaded to Downloads folder.")
 
     def __init__(self, sequence):
@@ -139,7 +139,7 @@ class RNA_STRAND():
         id_mo = self.choose_result()
         with open("{}_sequence.fasta".format(id_mo),"w") as f:
                 SeqIO.write(to_save, f, "fasta")
-        return("Fasta file is ready")
+        return("Fasta file is ready.")
 
     def get_structure(self):
         """Returns chosen molecule's ID and structure in a list.
@@ -167,7 +167,8 @@ class RNA_STRAND():
             for ind in range(1,len(struct_to_save)):
                 bpseq.write(struct_to_save[ind]+'\n')
         bpseq.close()
+        return("Bpseq file is ready.")
 
 
 #a = RNA_STRAND('UAAGCCCUA')
-#a.download_bpseq_structure()
+#print a.search_by_sequence()

@@ -56,5 +56,5 @@ class RNA_API():
             sys.stderr.write("Error: Invalid recquired output.")
 
 #Przyklad uzycia:
-#x = RNA_API("ndb","sequence","5SWE")
-#x.use_API()
+x = RNA_API("ndb","sequence","5SWE")
+x.use_API()
