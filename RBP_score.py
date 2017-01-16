@@ -150,6 +150,7 @@ class struct_comparison():
                     else:
                         rbp_score = min(possible_m_vals)
                         print('Your calculated relaxed base pare score for relaxation parameter t = {} is {}'.format(t,rbp_score))
+                        return(rbp_score)
 
-a = struct_comparison('TMR_00273_structure','PDB_01121_structure')
+a = struct_comparison('TMR_00273_structure','TMR_00200_structure')
 a.rbp_score()
