@@ -2,7 +2,8 @@
 """
 Created on Wed Oct  5 18:19:28 2016
 
-___author__: "Michal Karlicki, Gruszka, Asia Zbijewska"
+Author: "Michal Karlicki"
+Credits: "Gruszka, Asia Zbijewska"
 """
 import xlrd
 import csv
@@ -15,6 +16,28 @@ from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 from Bio.Alphabet import IUPAC
 from Bio import SeqIO
+from subprocess import Popen, PIPE
+
+
+def rmsd_calculation(x, y):
+    """ Enter two pdb files """
+    #os.system("python calculate_rmsd "+x+" "+y)
+    cmd = "python calculate_rmsd "+x+" "+y
+    #status = subprocess.call("python calculate_rmsd "+x+" "+y, shell=True)
+    p = Popen(cmd, shell=True, stdout=PIPE)
+    out, err = p.communicate()
+    return (out,err)
+    #print subprocess.check_call(status)
+    #out = subprocess.check_output("Normal RMSD", "Kabsch RMSD")
+    #return out
+
+#a = rmsd_calculation("5swe_TEST.pdb", "5swe_TEST.pdb")
+#print a
+
+
+
+
+
 
 def csv_from_excel():
     """Xls files converter"""
@@ -178,5 +201,5 @@ class via_sequence(Nucleic_acid_database):
 
 
 
-#proba = via_sequence(pdb_id = "5SWE")
-#print proba.download_fasta_sequence()
+proba = via_sequence(pdb_id = "5SWE")
+print proba.download_pdb_structure()
