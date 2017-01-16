@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 
 """
-__author__ = "Joanna Zbijewska"
+Author = "Joanna Zbijewska"
 """
 
 import sys
 import API_RNA_STRAND
-import API_PROJEKT
+import API_NDB
 
 
 class RNA_API():
