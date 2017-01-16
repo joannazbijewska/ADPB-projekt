@@ -7,10 +7,7 @@ __author__ = "Joanna Zbijewska"
 import sys
 import API_RNA_STRAND
 import API_PROJEKT
-<<<<<<< HEAD
 
-=======
->>>>>>> origin/master
 
 class RNA_API():
     """RNA_API is a class to combine two API classes for downloading RNA structures and sequneces."""
@@ -59,5 +56,5 @@ class RNA_API():
             sys.stderr.write("Error: Invalid recquired output.")
 
 #Przyklad uzycia:
-#x = RNA_API("ndb","sequence","5SWE")
-#x.use_API()
+x = RNA_API("ndb","sequence","5SWE")
+x.use_API()
