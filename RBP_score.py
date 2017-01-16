@@ -58,9 +58,14 @@ class struct_comparison():
     """This class takes two filenames of structures in bpseq format
     to compare."""
 
-    def __init__(self, filename1, filename2):
+    def __init__(self, filename1, filename2, t):
+        """Initializes arguments for struct_comparison class
+        filename1 - name of file with first structure to compare;
+        filename2 - name of file with second structure to compare;
+        t - value of the relaxation parameter, must be bigger than zero."""
         self.name1 = filename1
         self.name2 = filename2
+        self.t = t
 
     def initialize(self):
         """This function prepares structures to compare using the BPSEQ class"""
@@ -120,13 +125,13 @@ class struct_comparison():
     def rbp_score(self):
         """After setting the relaxation parameter (t), this function calculates
         the relaxed base pair score"""
+        t = self.t
         bp_score = self.bp_score()
         bp_value = len(bp_score)
         if bp_value == 0:
             print("Structures are identical!")
         else:
-            t = input('Choose your relaxation paramter: ')
-            t = float('t')
+            t = float(t)
             if t < 0:
                 print("Wrong number. Relaxation parameter must be bigger than zero.")
                 self.rbp_score()
