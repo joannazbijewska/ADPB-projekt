@@ -21,13 +21,16 @@ class _RNAfoldMinimalCommandLine(AbstractCommandline):
                     Print help and exit"""),
 
             _Switch(["--detailed-help", "detailed_help"],
-                    "Print help, including all details and hidden options, and exit"),
+                    """detailed_help
+                    Print help, including all details and hidden options, and exit"""),
 
             _Switch(["--full-help", "full_help"],
-                    "Print help, including hidden options, and exit"),
+                    """full_help
+                    Print help, including hidden options, and exit"""),
 
             _Switch(["-V", "--version", "version"],
-                    "Print version and exit"),
+                    """version
+                    Print version and exit"""),
             ]
         try:
             # Insert extra parameters - at the start just in case there
@@ -57,7 +60,8 @@ class RNAfoldCommandLine(_RNAfoldMinimalCommandLine):
                     stdin. Using this parameter the user can specify an input
                     file name where data is read from."""),
             _Option(["-o", "--outfile", "outfile"], #outfile=<filename>
-                    """Print output to file instead of stdout
+                    """outfile
+                    Print output to file instead of stdout
                     Specifying a file name/prefix will print the output into a file
                     instead of stdout. If a FASTA header precedes the input sequence,
                     the appropriate fasta ID is used as infix for the file name.
@@ -65,16 +69,20 @@ class RNAfoldCommandLine(_RNAfoldMinimalCommandLine):
                     If a file with the same filename already exists, any output of the program
                     will be appended to it."""),
             _Option(["-t", "--layout-type", "layout_type"], #layout-type=INT
-                    """Choose the layout algorithm. Simple radial layout if 0, or naview if 1
+                    """layout_type
+                    Choose the layout algorithm. Simple radial layout if 0, or naview if 1
                     (default='1')"""),
             _Option(["--noPS", "noPS"],
-                    """Do not produce postscript drawing of the mfe structure.
+                    """noPS
+                    Do not produce postscript drawing of the mfe structure.
                     (default=off)"""),
             _Option(["--noconv", "noconv"],
-                    """Do not automatically substitute nucleotide "T" with "U"
+                    """noconv
+                    Do not automatically substitute nucleotide "T" with "U"
                     (default=off)"""),
             _Option(["--auto-id", "auto_id"],
-                    """Automatically generate an ID for each sequence.
+                    """auto_id
+                    Automatically generate an ID for each sequence.
                     (default=off)
 
                     The default mode of RNAfold is to automatically determine an ID from
@@ -85,7 +93,8 @@ class RNAfoldCommandLine(_RNAfoldMinimalCommandLine):
                     of a prefix and an increasing number. This flag can also be used to add
                     a FASTA header to the output even if the input has none."""),
             _Option(["--id-prefix", "id_prefix"], #id-prefix=prefix
-                    """Prefix for automatically generated IDs (as used in output file names)
+                    """id_prefix
+                    Prefix for automatically generated IDs (as used in output file names)
                     (default=‘sequence’)
 
                     If this parameter is set, each sequence will be prefixed with the provided
@@ -95,7 +104,8 @@ class RNAfoldCommandLine(_RNAfoldMinimalCommandLine):
                     number.
                     Note: Setting this parameter implies −−auto−id."""),
             _Option(["--id-digits","id_digits"], #digits=INT
-                    """Specify the number of digits of the counter in automatically generated
+                    """id_digits
+                    Specify the number of digits of the counter in automatically generated
                     alignment IDs.
 
                     (default=‘4’)
@@ -107,7 +117,8 @@ class RNAfoldCommandLine(_RNAfoldMinimalCommandLine):
                     to the users need. We allow numbers in the range [1:18].
                     This option implies auto−id."""),
             _Option(["--id-start", "id_start"], #id-start=LONG
-                    """Specify the first number in automatically generated alignment IDs.
+                    """id_start
+                    Specify the first number in automatically generated alignment IDs.
 
                     (default=‘1’)
 
