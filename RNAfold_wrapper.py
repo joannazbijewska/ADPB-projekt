@@ -1,3 +1,5 @@
+# coding: utf-8
+
 from __future__ import print_function
 
 from Bio.Application import _Option, _Switch, AbstractCommandline
@@ -10,16 +12,20 @@ class _RNAfoldMinimalCommandLine(AbstractCommandline):
     - full-help         Print help, including hidden options, and exit
     - version           Print version and exit
     """
-    def __init__(self, cmd="RNAfold", **kwargs):
+    def __init__(self, cmd=None, **kwargs):
         assert cmd is not None
-        self.parameters = [
+        extra_parameters = [
+
             _Switch(["-h", "--help", "help"],
                     """help
                     Print help and exit"""),
-            _Switch(["--detailed-help", "detailed-help"],
+
+            _Switch(["--detailed-help", "detailed_help"],
                     "Print help, including all details and hidden options, and exit"),
-            _Switch(["--full-help", "full-help"],
+
+            _Switch(["--full-help", "full_help"],
                     "Print help, including hidden options, and exit"),
+
             _Switch(["-V", "--version", "version"],
                     "Print version and exit"),
             ]
@@ -32,13 +38,13 @@ class _RNAfoldMinimalCommandLine(AbstractCommandline):
             self.parameters = extra_parameters
         AbstractCommandline.__init__(self, cmd, **kwargs)
 
-class _RNAfoldCommandLine(_RNAfoldMinimalCommandLine):
+class RNAfoldCommandLine(_RNAfoldMinimalCommandLine):
     """
 
     """
     def __init__(self, cmd="RNAfold", **kwargs):
         assert cmd is not None
-        extra_parameters = [
+        self.parameters = [
 #General options
     #Command line options which alter the general behavior of this program
             _Option(["-v", "--verbose", "verbose"],
@@ -58,7 +64,7 @@ class _RNAfoldCommandLine(_RNAfoldMinimalCommandLine):
                     Each generated file will be suffixed with the file extension ’.fold’.
                     If a file with the same filename already exists, any output of the program
                     will be appended to it."""),
-            _Option(["-t", "--layout-type", "layout-type"], #layout-type=INT
+            _Option(["-t", "--layout-type", "layout_type"], #layout-type=INT
                     """Choose the layout algorithm. Simple radial layout if 0, or naview if 1
                     (default='1')"""),
             _Option(["--noPS", "noPS"],
@@ -67,7 +73,7 @@ class _RNAfoldCommandLine(_RNAfoldMinimalCommandLine):
             _Option(["--noconv", "noconv"],
                     """Do not automatically substitute nucleotide "T" with "U"
                     (default=off)"""),
-            _Option(["--auto-id", "auto-id"],
+            _Option(["--auto-id", "auto_id"],
                     """Automatically generate an ID for each sequence.
                     (default=off)
 
@@ -78,7 +84,7 @@ class _RNAfoldCommandLine(_RNAfoldMinimalCommandLine):
                     and automatically generates an ID for each sequence. This ID consists
                     of a prefix and an increasing number. This flag can also be used to add
                     a FASTA header to the output even if the input has none."""),
-            _Option(["--id-prefix", "id-prefix"], #id-prefix=prefix
+            _Option(["--id-prefix", "id_prefix"], #id-prefix=prefix
                     """Prefix for automatically generated IDs (as used in output file names)
                     (default=‘sequence’)
 
@@ -88,7 +94,7 @@ class _RNAfoldCommandLine(_RNAfoldMinimalCommandLine):
                     "prefix_xxxx_dp2.ps" (stack probabilities), etc. where xxxx is the sequence
                     number.
                     Note: Setting this parameter implies −−auto−id."""),
-            _Option(["--id-digits","id-digits"], #digits=INT
+            _Option(["--id-digits","id_digits"], #digits=INT
                     """Specify the number of digits of the counter in automatically generated
                     alignment IDs.
 
@@ -100,7 +106,7 @@ class _RNAfoldCommandLine(_RNAfoldMinimalCommandLine):
                     a certain width. Using this parameter, the width can be specified
                     to the users need. We allow numbers in the range [1:18].
                     This option implies auto−id."""),
-            _Option(["--id-start", "id-start"], #id-start=LONG
+            _Option(["--id-start", "id_start"], #id-start=LONG
                     """Specify the first number in automatically generated alignment IDs.
 
                     (default=‘1’)
@@ -116,7 +122,7 @@ class _RNAfoldCommandLine(_RNAfoldMinimalCommandLine):
                     """maxBPspan
                     Set the maximum base pair span
                     (default='-1')"""),
-            _Option(["-C", "--constraint" "constraint"], #constraint=<filename>
+            _Option(["-C", "--constraint", "constraint"], #constraint=<filename>
                     """constraint
                     Calculate structures subject to constraints.
                     (default='')

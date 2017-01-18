@@ -12,7 +12,6 @@ class API_PROJEKTfunctions(unittest.TestCase):
         example = API_NDB.via_sequence(pdb_id = "5SWE")
         assert example.get_seq_record() is not None
 
-
     def test_download_fasta_sequence(self):
         example = API_NDB.via_sequence(pdb_id = "5SWE")
         result = example.download_fasta_sequence()
@@ -57,7 +56,6 @@ class ApiRNASTRANDfunctions(unittest.TestCase):
     def test_class_instance(self):
         example = API_RNA_STRAND.RNA_STRAND('UAAGCCCUA')
         self.assertIsInstance(example, API_RNA_STRAND.RNA_STRAND)
-
 
 class Calculations(unittest.TestCase):
 
