@@ -111,11 +111,56 @@ class RNA_STRAND():
         """
         self.print_results()
         our_result = self.search_by_sequence()
-        choose_molecule = input('Which one is your molecule? Choose number: ')
-        choose_molecule = int(choose_molecule)
+        #choose_molecule = input('Which one is your molecule? Choose number: ')
+        choose_molecule = int(1)
         mo = our_result[choose_molecule-1]
         id_mo = mo[4]
         return(id_mo)
+
+
+    def metadata(self):
+        """Metadata download for chosen sequence."""
+        results = self.search_by_sequence()
+        chosen_id = self.choose_result()
+        for i in range(len(results)):
+            l = results[i]
+            if l[4] == chosen_id:
+                meta_list = l[1:]
+        urlrna = "http://www.rnasoft.ca/strand/"
+        res = urlrna+"show_results.php?molecule_ID={}".format(chosen_id)
+        content = requests.get(res)
+        content = html.fromstring(content.content)
+        table = content.xpath('//tr/td/text()')
+        regex1 = re.compile(r'\t')
+        regex2 = re.compile(r'\[')
+        regex3 = re.compile(r'\ ')
+        regex4 = re.compile(r'\]')
+        table1 = [elem for elem in table if elem != '\n']
+        table2 = [elem for elem in table1 if elem != ']:']
+        table3 = [elem for elem in table2 if regex1.match(elem) == None]
+        table4 = [elem for elem in table3 if regex2.match(elem) == None]
+        table5 = [elem for elem in table4 if regex3.match(elem) == None]
+        table6 = [elem for elem in table5 if regex4.search(elem) == None]
+        data = table6[3:]
+        data2 = []
+        for string in data:
+            string1 = string.lstrip('\n\t')
+            string2 = string1.rstrip(' [')
+            data2.append(string2)
+        dat = [x for x in data2 if x != '']
+        meta = [y for y in dat if re.search('Source',y) == None]
+        return(meta)
+
+    def metadata_to_file(self):
+        meta = self.metadata()
+        ID = meta[1]
+        metadata = list(split_list(meta,2))
+        metadata = [" : ".join(metadata[i]) for i in range(len(metadata))]
+        metadata = [dat + "\n" for dat in metadata]
+        with open("report_{}".format(ID), "w") as metafile:
+            metafile.writelines(metadata)
+        metafile.close()
+        return("Metadata report is ready")
 
     def get_sequence(self):
         """Returns respectively chosen molecule's (look choose_result and print_results) ID and sequence in a list."""
@@ -173,4 +218,4 @@ class RNA_STRAND():
 
 
 #a = RNA_STRAND('UAAGCCCUA')
-#print a.search_by_sequence()
+#a.metadata_to_file()
