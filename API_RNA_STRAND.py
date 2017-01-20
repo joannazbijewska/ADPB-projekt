@@ -30,16 +30,23 @@ class RNA_STRAND():
     """
     _urlrna = "http://www.rnasoft.ca/strand/"
 
-    def download_database(self):
-        """RNA Strand database downloader for users who think they may need it all."""
-        urlrna = "http://www.rnasoft.ca/strand/"
-        url = urlrna+"download/RNA_STRAND_data.tar.gz"
-        urllib.urlretrieve(url, "RNA_STRAND_data.tar.gz")
-        return ("RNA STRAND database downloaded to Downloads folder.")
-
-    def __init__(self, sequence):
+    def __init__(self, sequence, path=None):
+        self.path = path
+        if path is None:
+            self.path = ""
         """Initializer of the type sequence argument for futher functions."""
         self.sequence = sequence
+
+    def download_database(self):
+         #Co tutaj?
+        path = self.path
+        """RNA Strand database downloader for users who think they may need it all."""
+        urlrna = "http://www.rnasoft.ca/strand/"
+        url = urlrna+"{}RNA_STRAND_data.tar.gz".format(path=path)
+        urllib.urlretrieve(url, "RNA_STRAND_data.tar.gz")
+        return ("RNA STRAND database downloaded to given localizaton.")
+
+
 
     def search_by_sequence(self):
         """
@@ -153,11 +160,12 @@ class RNA_STRAND():
 
     def metadata_to_file(self):
         meta = self.metadata()
+        path = self.path
         ID = meta[1]
         metadata = list(split_list(meta,2))
         metadata = [" : ".join(metadata[i]) for i in range(len(metadata))]
         metadata = [dat + "\n" for dat in metadata]
-        with open("report_{}".format(ID), "w") as metafile:
+        with open("{path}report_{}".format(ID,path=path), "w") as metafile:
             metafile.writelines(metadata)
         metafile.close()
         return("Metadata report is ready")
@@ -184,7 +192,8 @@ class RNA_STRAND():
         """
         to_save = self.get_sequence()
         id_mo = self.choose_result()
-        with open("{}_sequence.fasta".format(id_mo),"w") as f:
+        path = self.path
+        with open("{path}{}_sequence.fasta".format(id_mo,path=path),"w") as f:
                 SeqIO.write(to_save, f, "fasta")
         return("Fasta file is ready.")
 
@@ -210,12 +219,12 @@ class RNA_STRAND():
         """Saver of chosen molecule's (look choose_result and print_results) structure in bpseq format.
         """
         struct_to_save = self.get_structure()
-        with open('{}_structure.bpseq'.format(struct_to_save[0]), 'w') as bpseq:
+        with open('{path}{}_structure.bpseq'.format(struct_to_save[0],path=path), 'w') as bpseq:
             for ind in range(1,len(struct_to_save)):
                 bpseq.write(struct_to_save[ind]+'\n')
         bpseq.close()
         return("Bpseq file is ready.")
 
 
-#a = RNA_STRAND('UAAGCCCUA')
-#a.metadata_to_file()
+a = RNA_STRAND('UAAGCCCUA',path="/Users/michalkarlicki/Desktop/")
+a.metadata_to_file()
