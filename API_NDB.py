@@ -150,6 +150,7 @@ class Nucleic_acid_database():
         sequence = self.get_seq_record()
         with open("{}_sequence.fasta".format(pdb_id),"w") as f:
             SeqIO.write(sequence, f, "fasta")
+        f.close()
         return "Fasta file is ready"
 
     def metadata_to_file(self):

@@ -15,7 +15,7 @@ class RNA_API():
     def __init__(self, database, what, inpt, input_type = None):
         """Four arguments:
         database: to choose the database you want to access
-        what: to choose type of data you want to get - sequence or structure
+        what: to choose type of data you want to get - sequence, structure or metadata
         inpt: string to search through the database - a string for sequence or PDB id
         input_type: if the inpt string is a PDB id you have to type "pdb_id"
         """
@@ -44,17 +44,22 @@ class RNA_API():
         return(c)
 
     def use_API(self):
-        """Downloads sequence or structure depending on what value"""
-        if what == "sequence":
+        """Downloads sequence, structure or metadata depending on what value"""
+        what = self.what
+        poss_what = ["sequence", "structure", "metadata"]
+        if (what != poss_what[i] for i in xrange(2)):
+            sys.stderr.write("Error: Invalid recquired output.")
+            sys.exit(1)
+        if what == poss_what[0]:
             c.download_fasta_sequence()
-        elif what == "structure":
+        elif what == poss_what[1]:
             if type(c) == "RNA_STRAND":
                 c.download_bpseq_structure()
             else:
                 c.download_pdb_structure()
         else:
-            sys.stderr.write("Error: Invalid recquired output.")
+            c.metadata_to_file()
 
 #Przyklad uzycia:
-x = RNA_API("ndb","sequence","5SWE")
-x.use_API()
+#x = RNA_API("ndb","sequence","5SWE")
+#x.use_API()
