@@ -16,7 +16,7 @@ class _RNAfoldMinimalCommandLine(AbstractCommandline):
         assert cmd is not None
         extra_parameters = [
 
-            _Switch(["-h", "--help", "help"],
+            _Switch(["-h", "help"],
                     """help
                     Print help and exit"""),
 
@@ -46,7 +46,7 @@ class RNAfoldCommandLine(_RNAfoldMinimalCommandLine):
 
     """
     def __init__(self, cmd="RNAfold", **kwargs):
-        assert cmd is not None
+        #assert cmd is not None
         self.parameters = [
 #General options
     #Command line options which alter the general behavior of this program
@@ -58,7 +58,8 @@ class RNAfoldCommandLine(_RNAfoldMinimalCommandLine):
                     Read a file instead of reading from stdin.
                     The default behavior of RNAfold is to read input from
                     stdin. Using this parameter the user can specify an input
-                    file name where data is read from."""),
+                    file name where data is read from.""",filename=True,equate=False),
+
             _Option(["-o", "--outfile", "outfile"], #outfile=<filename>
                     """outfile
                     Print output to file instead of stdout
@@ -67,15 +68,15 @@ class RNAfoldCommandLine(_RNAfoldMinimalCommandLine):
                     the appropriate fasta ID is used as infix for the file name.
                     Each generated file will be suffixed with the file extension ’.fold’.
                     If a file with the same filename already exists, any output of the program
-                    will be appended to it."""),
+                    will be appended to it.""", filename=True, equate=False),
             _Option(["-t", "--layout-type", "layout_type"], #layout-type=INT
                     """layout_type
                     Choose the layout algorithm. Simple radial layout if 0, or naview if 1
-                    (default='1')"""),
+                    (default='1')""",equate=False),
             _Option(["--noPS", "noPS"],
                     """noPS
                     Do not produce postscript drawing of the mfe structure.
-                    (default=off)"""),
+                    (default=off)""",equate=False),
             _Option(["--noconv", "noconv"],
                     """noconv
                     Do not automatically substitute nucleotide "T" with "U"
@@ -91,7 +92,7 @@ class RNAfoldCommandLine(_RNAfoldMinimalCommandLine):
                     If this flag is active, RNAfold ignores any IDs retrieved from the input
                     and automatically generates an ID for each sequence. This ID consists
                     of a prefix and an increasing number. This flag can also be used to add
-                    a FASTA header to the output even if the input has none."""),
+                    a FASTA header to the output even if the input has none.""",equate=False),
             _Option(["--id-prefix", "id_prefix"], #id-prefix=prefix
                     """id_prefix
                     Prefix for automatically generated IDs (as used in output file names)
@@ -102,7 +103,7 @@ class RNAfoldCommandLine(_RNAfoldMinimalCommandLine):
                     "prefix_xxxx_ss.ps" (secondary structure plot), "prefix_xxxx_dp.ps" (dot−plot),
                     "prefix_xxxx_dp2.ps" (stack probabilities), etc. where xxxx is the sequence
                     number.
-                    Note: Setting this parameter implies −−auto−id."""),
+                    Note: Setting this parameter implies −−auto−id.""",equate=False),
             _Option(["--id-digits","id_digits"], #digits=INT
                     """id_digits
                     Specify the number of digits of the counter in automatically generated
@@ -115,7 +116,7 @@ class RNAfoldCommandLine(_RNAfoldMinimalCommandLine):
                     be left−padded by leading zeros, such that the number takes up
                     a certain width. Using this parameter, the width can be specified
                     to the users need. We allow numbers in the range [1:18].
-                    This option implies auto−id."""),
+                    This option implies auto−id.""",equate=False),
             _Option(["--id-start", "id_start"], #id-start=LONG
                     """id_start
                     Specify the first number in automatically generated alignment IDs.
@@ -126,13 +127,13 @@ class RNAfoldCommandLine(_RNAfoldMinimalCommandLine):
                     number, usually starting with 1. Using this parameter, the first number
                     can be specified to the users requirements. Note: negative numbers are
                     not allowed. Note: Setting this parameter implies to ignore any IDs
-                    retrieved from the input data, i.e. it activates the auto−id flag."""),
+                    retrieved from the input data, i.e. it activates the auto−id flag.""",equate=False),
 #Structure Constrains:
     #Command line options to interact with the structure constraints feature of this program
             _Option(["--maxBPspan", "maxBPspan"], #maxBPspan=INT
                     """maxBPspan
                     Set the maximum base pair span
-                    (default='-1')"""),
+                    (default='-1')""",equate=False),
             _Option(["-C", "--constraint", "constraint"], #constraint=<filename>
                     """constraint
                     Calculate structures subject to constraints.
@@ -151,8 +152,8 @@ class RNAfoldCommandLine(_RNAfoldMinimalCommandLine):
                     conflicting with the constraint. This is usually sufficient
                     to enforce the constraint, but occasionally a base may stay unpaired
                     in spite of constraints. PF folding ignores constraints of type "|".
-                    """),
-            _Option(["--batch", "batch"],
+                    """,equate=False, filename=True),
+            _Switch(["--batch", "batch"],
                     """batch
                     Use constraints for multiple sequences.
                     (default=off)
@@ -161,17 +162,17 @@ class RNAfoldCommandLine(_RNAfoldMinimalCommandLine):
                     and quit after the first input sequence was processed. Using this switch,
                     RNAfold processes multiple input sequences and applies the same provided
                     constraints to each of them."""),
-            _Option(["--canonicalBPonly", "canonicalBPonly"],
+            _Switch(["--canonicalBPonly", "canonicalBPonly"],
                     """canonicalBPonly
                     Remove non−canonical base pairs from the structure constraint
                     (default=off"""),
             _Option(["--enforceConstraint", "enforceConstraint"],
                     """enforceConstraint
                     Enforce base pairs given by round brackets ( ) in structure constraint
-                    (default=off)"""),
+                    (default=off)""",equate=False),
             _Option(["--shape", "shape"], #shape=<filename>
                     """shape
-                    Use SHAPE reactivity data to guide structure predictions"""),
+                    Use SHAPE reactivity data to guide structure predictions""",equate=False, filename=True),
             _Option(["--shapeMethod", "shapeMethod"], #shapeMethod=[D/Z/W]+[optional parameters]
                     """shapeMethod
                     Select method to incorporate SHAPE reactivity data.
@@ -199,7 +200,7 @@ class RNAfoldCommandLine(_RNAfoldMinimalCommandLine):
 
                     ’W’: Apply a given vector of perturbation energies to unpaired nucleotides
                     according to Washietl et al 2012. Perturbation vectors can be calculated by
-                    using RNApvmin."""),
+                    using RNApvmin.""",equate=False),
             _Option(["--shapeConversion", "shapeConversion"], #shapeConversion=M/C/S/L/O + [optional parameters]
                     """shapeConversion
                     Select method to convert SHAPE reactivities to pairing probabilities.
@@ -222,7 +223,7 @@ class RNAfoldCommandLine(_RNAfoldMinimalCommandLine):
 
                     ’O’: Use a linear model to convert the log of the reactivity into a probability
                     for being unpaired (e.g. "Os1.6i−2.29" to use a slope of 1.6 and an intercept of −2.29)
-                    """),
+                    """,equate=False),
             _Option(["--motif", "motif"], #motif=SEQUENCE,STRUCTURE,ENERGY
                     """motif
                     Specify stabilizing effect of ligand binding to a particular
@@ -243,7 +244,7 @@ class RNAfoldCommandLine(_RNAfoldMinimalCommandLine):
                     Read additional commands from file
                     Commands include hard and soft constraints, but also structure motifs in hairpin
                     and interior loops that need to be treeted differently. Furthermore,
-                    commands can be set for unstructured and structured domains."""),
+                    commands can be set for unstructured and structured domains.""",equate=False, filename=True),
 #Algorithms:
     #Select additional algorithms which should be included in the calculations.
     #The Minimum free energy (MFE) and a structure representative are calculated in any case.
@@ -276,8 +277,8 @@ class RNAfoldCommandLine(_RNAfoldMinimalCommandLine):
                     simultaneously in addition to pair probabilities. A second postscript
                     dot plot called "name_dp2.ps", or "dot2.ps" (if the sequence does not have
                     a name), is produced that contains pair probabilities in the upper right half
-                    and stack probabilities in the lower left."""),
-            _Option(["--MEA", "MEA"], #MEA=gamma
+                    and stack probabilities in the lower left.""",equate=False),
+            _Option(["--MEA", "MEA"], #MEA=gamma #dziala
                     """MEA
                     Calculate an MEA (maximum expected accuracy) structure, where the expected
                     accuracy is computed from the pair probabilities: each base pair (i,j) gets
@@ -289,7 +290,7 @@ class RNAfoldCommandLine(_RNAfoldMinimalCommandLine):
                     The parameter gamma tunes the importance of correctly predicted pairs versus
                     unpaired bases. Thus, for small values of gamma the MEA structure will contain
                     only pairs with very high probability. Using MEA implies p for computing
-                    the pair probabilities."""),
+                    the pair probabilities.""",),
             _Option(["-S","--pfScale", "pfScale"], #pfScale=scaling factor
                     """pfScale
                     In the calculation of the pf use scale*mfe as an estimate for the ensemble
@@ -297,11 +298,11 @@ class RNAfoldCommandLine(_RNAfoldMinimalCommandLine):
 
                     The default is 1.07, useful values are 1.0 to 1.2. Occasionally needed for long
                     sequences. You can also recompile the program to use double precision."""),
-            _Option(["-c","--circ", "circ"],
+            _Switch(["-c","--circ", "circ"],
                     """circ
                     Assume a circular (instead of linear) RNA molecule.
                     (default=off)"""),
-            _Option(["--ImFeelingLucky", "ImFeelingLucky"],
+            _Switch(["--ImFeelingLucky", "ImFeelingLucky"],
                     """ImFeelingLucky
                     Return exactly one stochastically backtracked structure
 
@@ -325,19 +326,19 @@ class RNAfoldCommandLine(_RNAfoldMinimalCommandLine):
             _Option(["-g","--gquad", "gquad"],
                     """gquad
                     Incoorporate G−Quadruplex formation into the structure prediction algorithm.
-                    (default=off)"""),
+                    (default=off)""",equate=False),
 #Model Details
             _Option(["-T","--temp", "temp"], #temp=DOUBLE
                     """temp
                     Rescale energy parameters to a temperature of temp C.
-                    Default is 37C."""),
+                    Default is 37C.""",equate=False),
             #_Option(["-4","--noTetra", "noTetra"],
                     #"""noTetra
                     #Do not include special tabulated stabilizing energies for tri−,
                     #tetra− and hexaloop hairpins.
                     #(default=off)
                     #Mostly for testing."""),
-            _Option(["-d","--dangles", "dangles"], #dangles=INT
+            _Option(["-d","--dangles", "dangles"], #Działa
                     """dangles
                     How to treat "dangling end" energies for bases adjacent to helices
                     in free ends and multi−loops
@@ -358,8 +359,8 @@ class RNAfoldCommandLine(_RNAfoldMinimalCommandLine):
 
                     Note that by default (as well as with dangles1 and dangles3) pf and mfe folding treat
                     dangling ends differently. Use dangles2 in addition to partfunc to ensure that both
-                    algorithms use the same energy model."""),
-            _Option(["--noLP", "noLP"],
+                    algorithms use the same energy model.""",non_space=True),
+            _Switch(["--noLP", "noLP"],
                     """noLP
                     Produce structures without lonely pairs (helices of length 1).
 
@@ -367,11 +368,11 @@ class RNAfoldCommandLine(_RNAfoldMinimalCommandLine):
 
                     For partition function folding this only disallows pairs that can only occur isolated.
                     Other pairs may still occasionally occur as helices of length 1."""),
-            _Option(["--noGU", "noGU"],
+            _Switch(["--noGU", "noGU"],
                     """noGU
                     Do not allow GU pairs
                     (default=off)"""),
-            _Option(["--noClosingGU", "noClosingGU"],
+            _Switch(["--noClosingGU", "noClosingGU"],
                     """noClosingGU
                     Do not allow GU pairs at the end of helices
                     (default=off)"""),
@@ -381,7 +382,7 @@ class RNAfoldCommandLine(_RNAfoldMinimalCommandLine):
                     Read energy parameters from paramfile, instead of using the default parameter set.
 
                     A sample parameter file should accompany your distribution. See the RNAlib
-                    documentation for details on the file format."""),
+                    documentation for details on the file format.""",equate=False, filename=True),
             _Option(["--nsp", "nsp"], #nsp=STRING
                     """nsp
                     Allow other pairs in addition to the usual AU,GC,and GU pairs.
@@ -389,12 +390,12 @@ class RNAfoldCommandLine(_RNAfoldMinimalCommandLine):
                     Its argument is a comma separated list of additionally allowed pairs.
                     If the first character is a "−" then AB will imply that AB and BA are allowed
                     pairs. e.g. RNAfold nsp −GA will allow GA and AG pairs. Nonstandard pairs
-                    are given 0 stacking energy."""),
+                    are given 0 stacking energy.""",equate=False),
             _Option(["-e","--energyModel", "energyModel"], #energyModel=INT
                     """energyModel
                     Rarely used option to fold sequences from the artificial ABCD... alphabet,
                     where A pairs B, C−D etc. Use the energy parameters for GC (e 1) or AU (e 2)
-                    pairs."""),
+                    pairs.""",equate=False),
             _Option(["--betaScale", "betaScale"], #betaScale=DOUBLE
                     """betaScale
 
@@ -411,3 +412,7 @@ class RNAfoldCommandLine(_RNAfoldMinimalCommandLine):
 
             ]
         _RNAfoldMinimalCommandLine.__init__(self, cmd, **kwargs)
+cline = RNAfoldCommandLine(infile="~/Desktop/jakis_plik.fasta",energyModel=0, dangles=2,maxBPspan=1)
+print("About to run: %s" % cline)
+std_output, err_output = cline()
+print(std_output)
