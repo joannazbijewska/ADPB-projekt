@@ -189,6 +189,8 @@ class via_sequence(Nucleic_acid_database):
     def __init__(self, sequence = None, pdb_id = None, path= None):
         self.sequence = sequence
         self.path = path
+        if path is None:
+            self.path = ""
         if pdb_id is None:
             self.pdb_id = get_from_db_via_seq(self.sequence)
         else:
@@ -196,5 +198,5 @@ class via_sequence(Nucleic_acid_database):
 
 
 
-proba = via_sequence(pdb_id = "5SWE",path="/Users/michalkarlicki/Desktop/")
+proba = via_sequence(pdb_id = "5SWE",path=None)
 print proba.download_pdb_structure()
