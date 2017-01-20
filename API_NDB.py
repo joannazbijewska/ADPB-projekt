@@ -89,8 +89,9 @@ class Nucleic_acid_database():
     """This class serves to access NDB database, download it, search it and download single files"""
     _urlna = "http://ndbserver.rutgers.edu"
 
-    def __init__(self, pdb_id):
+    def __init__(self, pdb_id, path):
         self.pdb_id = pdb_id
+        self.pdb_id = path
 
     def download_database(self):
         """Update NDB database and convert file to csv"""
@@ -117,6 +118,7 @@ class Nucleic_acid_database():
         """Structure downloader in pdb format"""
         urldb = "http://ndbserver.rutgers.edu"
         pdb_id = self.pdb_id.lower()
+        path = self.path
         url1 = urldb+"/files/ftp/NDB/coordinates/na-nmr/pdb{}.ent.gz.".format(pdb_id)
         url2 = urldb+"/files/ftp/NDB/coordinates/na-biol/{}.pdb1".format(pdb_id)
         r = requests.get(url1)
@@ -124,7 +126,7 @@ class Nucleic_acid_database():
             urllib.urlretrieve(url1, "{}.ent.gz.".format(pdb_id))
         else:
             urllib.urlretrieve(url2, "{}.pdb1".format(pdb_id))
-        os.rename(pdb_id+".pdb1", pdb_id+".pdb")
+        os.rename(pdb_id+".pdb1", path+pdb_id+".pdb")
         return "PDB file {} is ready".format(pdb_id.upper())
 
 
@@ -148,7 +150,8 @@ class Nucleic_acid_database():
         """Sequence download in fasta format for desired PDB ID (look get_from_db_via_seq)"""
         pdb_id = self.pdb_id
         sequence = self.get_seq_record()
-        with open("{}_sequence.fasta".format(pdb_id),"w") as f:
+        path = self.path
+        with open("{path}{}_sequence.fasta".format(pdb_id,path= path),"w") as f:
             SeqIO.write(sequence, f, "fasta")
         f.close()
         return "Fasta file is ready"
@@ -156,12 +159,13 @@ class Nucleic_acid_database():
     def metadata_to_file(self):
         """Metadata download for specified sequence or PDB ID (look get_from_db_via_seq)"""
         pdb_id = self.pdb_id
+        path = self.path
         with open("NDB_database.csv","r") as f:
             otw = csv.reader(f)
             for i in otw:
                 if i[1] == pdb_id:
                       meta = i
-        f = open("report_{}".format(pdb_id), "w")
+        f = open("{}report_{}".format(pdb_id, path=path), "w")
         metadata = "Pdb id: {pdb}\nNbd id: {nbd}\nName of the structure: {nazwa}\nTitle of the publication: {title}\nDate of publication: {data}\nAuthors: {aut}\nMethod: {method}\nResolution: {rez}\nR value: {rvl}".format(pdb = meta[1], nazwa = meta[3], nbd = meta[0], title = meta[6], data = meta[4], aut = meta[5], method = meta[8], rez = meta[9], rvl = meta[10])
         f.write("RNA structure from NBD\n"+metadata)
         f.close()
@@ -182,8 +186,9 @@ class via_sequence(Nucleic_acid_database):
     """This class inherites form the Nucleic_acid_database class and enables searching and downloading
     from NDB database via sequence"""
 
-    def __init__(self, sequence = None, pdb_id = None):
+    def __init__(self, sequence = None, pdb_id = None, path= None):
         self.sequence = sequence
+        self.path = path
         if pdb_id is None:
             self.pdb_id = get_from_db_via_seq(self.sequence)
         else:
@@ -191,5 +196,5 @@ class via_sequence(Nucleic_acid_database):
 
 
 
-proba = via_sequence(pdb_id = "5SWE")
+proba = via_sequence(pdb_id = "5SWE",path="/Users/michalkarlicki/Desktop/")
 print proba.download_pdb_structure()
