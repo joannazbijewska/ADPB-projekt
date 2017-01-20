@@ -118,8 +118,8 @@ class RNA_STRAND():
         """
         self.print_results()
         our_result = self.search_by_sequence()
-        #choose_molecule = input('Which one is your molecule? Choose number: ')
-        choose_molecule = int(1)
+        choose_molecule = input('Which one is your molecule? Choose number: ')
+        choose_molecule = int(choose_molecule)
         mo = our_result[choose_molecule-1]
         id_mo = mo[4]
         return(id_mo)

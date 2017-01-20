@@ -1,8 +1,8 @@
 """ADPB"""
 print "module prettytable is needed"
 
-import API_NDB
-import API_RNA_STRAND
+from RNA_structure import API_NDB
+from RNA_structure import API_RNA_STRAND
 import os
 #import subprocess
 #import RNA_API
