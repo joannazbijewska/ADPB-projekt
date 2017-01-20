@@ -12,17 +12,21 @@ import API_NDB
 class RNA_API():
     """RNA_API is a class to combine two API classes for downloading RNA structures and sequneces."""
 
-    def __init__(self, database, what, inpt, input_type = None):
+    def __init__(self, database, what, inpt, input_type = None, p = None):
         """Four arguments:
         database: to choose the database you want to access
         what: to choose type of data you want to get - sequence, structure or metadata
         inpt: string to search through the database - a string for sequence or PDB id
         input_type: if the inpt string is a PDB id you have to type "pdb_id"
+        p: path to save your desired data, if none give - all files are save in current directory
         """
         self.db = database
         self.what = what
         self.inpt = inpt
         self.type = input_type
+        self.p = p
+        if p = None:
+            self.p = ""
 
     def choose_db(self):
         """Function to choose the database. It gives the class to inpt."""
@@ -30,14 +34,14 @@ class RNA_API():
         db = db.upper()
         if self.type is None:
             if db == "NDB":
-                c = via_sequence(sequence = self.inpt)
+                c = via_sequence(sequence = self.inpt, path = self.p)
             elif db == "RNA-STRAND" or db == "RNA-STRAND":
-                c = RNA_STRAND(self.inpt)
+                c = RNA_STRAND(sequence = self.inpt, path = self.p)
             else:
                 sys.stderr.write("Error: Invalid database name.")
                 sys.exit(1)
         elif self.type.lower() == "pdb_id":
-            c = Nucleic_acid_database(self.inpt)
+            c = Nucleic_acid_database(pdb_id = self.inpt, path = self.p)
         else:
             sys.stderr.write("Error: Invalid input type.")
             sys.exit(1)

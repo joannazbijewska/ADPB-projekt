@@ -91,7 +91,7 @@ class Nucleic_acid_database():
 
     def __init__(self, pdb_id, path):
         self.pdb_id = pdb_id
-        self.pdb_id = path
+        self.path = path
 
     def download_database(self):
         """Update NDB database and convert file to csv"""
@@ -186,7 +186,7 @@ class via_sequence(Nucleic_acid_database):
     """This class inherites form the Nucleic_acid_database class and enables searching and downloading
     from NDB database via sequence"""
 
-    def __init__(self, sequence = None, pdb_id = None, path= None):
+    def __init__(self, sequence = None, pdb_id = None, path = None):
         self.sequence = sequence
         self.path = path
         if path is None:
