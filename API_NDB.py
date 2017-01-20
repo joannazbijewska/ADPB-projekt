@@ -195,8 +195,3 @@ class via_sequence(Nucleic_acid_database):
             self.pdb_id = get_from_db_via_seq(self.sequence)
         else:
             self.pdb_id = pdb_id
-
-
-
-proba = via_sequence(pdb_id = "5SWE",path=None)
-print proba.download_pdb_structure()

@@ -1,7 +1,7 @@
 # coding: utf-8
 
 from __future__ import print_function
-
+import re
 from Bio.Application import _Option, _Switch, AbstractCommandline
 
 class _RNAfoldMinimalCommandLine(AbstractCommandline):
@@ -416,3 +416,11 @@ cline = RNAfoldCommandLine(infile="~/Desktop/jakis_plik.fasta",energyModel=0, da
 print("About to run: %s" % cline)
 std_output, err_output = cline()
 print(std_output)
+
+def dot_parenthesis(x):
+    x = x.replace(" ","\n")
+    return(x.split("\n"))[2]
+def energy(x):
+    x = x.replace(" ","\n")
+    return(x.split("\n"))[3]
+print(dot_parenthesis(std_output))
