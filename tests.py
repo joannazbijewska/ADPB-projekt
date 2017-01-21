@@ -1,8 +1,8 @@
 
 import unittest
-import API_NDB
-import API_RNA_STRAND
-import RBP_score
+from API import API_NDB, API_RNA_STRAND
+from RBP_score import RBP_score
+from RNAfold import RNAfold_wrapper
 import os
 
 
@@ -43,13 +43,12 @@ class ApiRNASTRANDfunctions(unittest.TestCase):
 
     def test_searchbysequence(self):
         example = API_RNA_STRAND.RNA_STRAND('UAAGCCCUA')
-        #result = example.search_by_sequence()
         assert example.search_by_sequence() is not None
 
     def test_download_database(self):
         example = API_RNA_STRAND.RNA_STRAND('UAAGCCCUA')
         result = example.download_database()
-        expected = "RNA STRAND database downloaded to Downloads folder."
+        expected = "RNA STRAND database downloaded to given localizaton."
         self.assertEqual(result, expected)
         os.remove("RNA_STRAND_data.tar.gz")
 
@@ -69,6 +68,11 @@ class Calculations(unittest.TestCase):
         result = example.rbp_score()
         expected = 1.0
         self.assertEqual(result, expected)
+class RNA_Fold_wrapper(unittest.TestCase):
+
+    def  test_rna_fold(self):
+        cline = RNAfold_wrapper.RNAfoldCommandLine(energyModel=0, dangles=2,maxBPspan=1)
+        self.assertIsInstance(cline, RNAfold_wrapper.RNAfoldCommandLine)
 
 
 if __name__ == "__main__":

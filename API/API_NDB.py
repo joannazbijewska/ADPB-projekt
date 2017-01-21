@@ -165,7 +165,7 @@ class Nucleic_acid_database():
             for i in otw:
                 if i[1] == pdb_id:
                       meta = i
-        f = open("{}report_{}".format(pdb_id, path=path), "w")
+        f = open("{path}report_{}".format(pdb_id, path=path), "w")
         metadata = "Pdb id: {pdb}\nNbd id: {nbd}\nName of the structure: {nazwa}\nTitle of the publication: {title}\nDate of publication: {data}\nAuthors: {aut}\nMethod: {method}\nResolution: {rez}\nR value: {rvl}".format(pdb = meta[1], nazwa = meta[3], nbd = meta[0], title = meta[6], data = meta[4], aut = meta[5], method = meta[8], rez = meta[9], rvl = meta[10])
         f.write("RNA structure from NBD\n"+metadata)
         f.close()
