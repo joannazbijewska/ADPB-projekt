@@ -42,7 +42,7 @@ class RNA_STRAND():
         path = self.path
         """RNA Strand database downloader for users who think they may need it all."""
         urlrna = "http://www.rnasoft.ca/strand/"
-        url = urlrna+"{}RNA_STRAND_data.tar.gz".format(path=path)
+        url = urlrna+"{path}RNA_STRAND_data.tar.gz".format(path=path)
         urllib.urlretrieve(url, "RNA_STRAND_data.tar.gz")
         return ("RNA STRAND database downloaded to given localizaton.")
 
@@ -226,5 +226,5 @@ class RNA_STRAND():
         return("Bpseq file is ready.")
 
 
-a = RNA_STRAND('UAAGCCCUA',path="/Users/michalkarlicki/Desktop/")
-a.metadata_to_file()
+#a = RNA_STRAND('UAAGCCCUA',path="/Users/michalkarlicki/Desktop/")
+#a.metadata_to_file()
