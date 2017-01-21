@@ -417,6 +417,9 @@ print("About to run: %s" % cline)
 std_output, err_output = cline()
 print(std_output)
 
+def sequence(x):
+    x = x.replace(" ","\n")
+    return(x.split("\n"))[1]
 def dot_parenthesis(x):
     x = x.replace(" ","\n")
     return(x.split("\n"))[2]
